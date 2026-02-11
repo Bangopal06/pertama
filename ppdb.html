@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPDB - SMA Negeri 1</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">SMA Negeri 1</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="profil.html">Profil</a></li>
+                <li><a href="berita.html">Berita</a></li>
+                <li><a href="ppdb.html" class="active">PPDB</a></li>
+                <li><a href="kontak.html">Kontak</a></li>
+                <li><a href="admin/login.html" class="btn-admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>Penerimaan Peserta Didik Baru (PPDB)</h1>
+    </section>
+
+    <section class="ppdb-section">
+        <div class="container">
+            <div class="ppdb-info">
+                <h2>Informasi PPDB 2024/2025</h2>
+                <div class="info-box">
+                    <h3>Jadwal Pendaftaran</h3>
+                    <p>Pendaftaran: 1 Juni - 30 Juni 2024</p>
+                    <p>Pengumuman: 5 Juli 2024</p>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Form Pendaftaran PPDB</h2>
+                <form id="ppdb-form">
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" name="nama" required>
+                    </div>
+                    <div class="form-group">
+                        <label>NISN</label>
+                        <input type="text" name="nisn" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tempat Lahir</label>
+                        <input type="text" name="tempat_lahir" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jenis Kelamin</label>
+                        <select name="jenis_kelamin" required>
+                            <option value="">Pilih</option>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Asal Sekolah</label>
+                        <input type="text" name="asal_sekolah" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Alamat</label>
+                        <textarea name="alamat" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>No. Telepon</label>
+                        <input type="tel" name="telepon" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Daftar Sekarang</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 SMA Negeri 1. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/ppdb.js"></script>
+</body>
+</html>

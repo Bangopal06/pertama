@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - SMA Negeri 1</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="logo">Admin Panel</div>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="berita.html">Kelola Berita</a>
+                <a href="ppdb.html">Data PPDB</a>
+                <a href="#" id="logout">Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Dashboard</h1>
+            </header>
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Total Berita</h3>
+                    <p class="stat-number" id="total-berita">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pendaftar PPDB</h3>
+                    <p class="stat-number" id="total-ppdb">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Berita Hari Ini</h3>
+                    <p class="stat-number" id="berita-hari-ini">0</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/admin-dashboard.js"></script>
+</body>
+</html>

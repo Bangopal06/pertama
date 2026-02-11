@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Berita - Admin</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="logo">Admin Panel</div>
+            <nav class="admin-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="berita.html" class="active">Kelola Berita</a>
+                <a href="ppdb.html">Data PPDB</a>
+                <a href="#" id="logout">Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Kelola Berita</h1>
+                <button class="btn-primary" id="btn-tambah">Tambah Berita</button>
+            </header>
+            
+            <div id="form-berita" class="form-container" style="display:none;">
+                <h2 id="form-title">Tambah Berita Baru</h2>
+                <form id="berita-form">
+                    <input type="hidden" id="berita-id">
+                    <div class="form-group">
+                        <label>Judul</label>
+                        <input type="text" id="judul" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Konten</label>
+                        <textarea id="konten" rows="6" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select id="kategori" required>
+                            <option value="Akademik">Akademik</option>
+                            <option value="Prestasi">Prestasi</option>
+                            <option value="Kegiatan">Kegiatan</option>
+                            <option value="Pengumuman">Pengumuman</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Simpan</button>
+                        <button type="button" class="btn-secondary" id="btn-batal">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Judul</th>
+                            <th>Kategori</th>
+                            <th>Tanggal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="berita-list"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="../js/admin-berita.js"></script>
+</body>
+</html>

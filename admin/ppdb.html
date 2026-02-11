@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data PPDB - Admin</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="logo">Admin Panel</div>
+            <nav class="admin-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="berita.html">Kelola Berita</a>
+                <a href="ppdb.html" class="active">Data PPDB</a>
+                <a href="#" id="logout">Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Data Pendaftar PPDB</h1>
+                <button class="btn-primary" id="btn-export">Export Data</button>
+            </header>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>NISN</th>
+                            <th>Asal Sekolah</th>
+                            <th>Telepon</th>
+                            <th>Email</th>
+                            <th>Tanggal Daftar</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ppdb-list"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="../js/admin-ppdb.js"></script>
+</body>
+</html>
