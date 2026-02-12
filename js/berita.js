@@ -16,9 +16,12 @@ async function loadAllNews() {
         
         newsContainer.innerHTML = berita.map(b => `
             <div class="news-card">
-                <h3>${b.judul}</h3>
-                <p class="news-meta">${b.kategori} - ${new Date(b.tanggal).toLocaleDateString('id-ID')}</p>
-                <p>${b.konten}</p>
+                <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}" alt="${b.judul}" class="news-image">
+                <div class="news-content">
+                    <h3>${b.judul}</h3>
+                    <p class="news-meta">${b.kategori} - ${new Date(b.tanggal).toLocaleDateString('id-ID')}</p>
+                    <p>${b.konten}</p>
+                </div>
             </div>
         `).join('');
     } catch (error) {

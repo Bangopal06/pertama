@@ -32,6 +32,37 @@
                         <input type="text" id="judul" required>
                     </div>
                     <div class="form-group">
+                        <label>Gambar Berita</label>
+                        <div style="margin-bottom: 10px;">
+                            <label style="display: inline-flex; align-items: center; margin-right: 20px;">
+                                <input type="radio" name="image-type" value="file" checked style="margin-right: 5px;">
+                                Upload dari Perangkat
+                            </label>
+                            <label style="display: inline-flex; align-items: center;">
+                                <input type="radio" name="image-type" value="url" style="margin-right: 5px;">
+                                Gunakan URL
+                            </label>
+                        </div>
+                        <div id="file-upload-section">
+                            <input type="file" id="gambar_file" accept="image/*">
+                            <small>Pilih gambar dari perangkat Anda (JPG, PNG, max 5MB)</small>
+                        </div>
+                        <div id="url-input-section" style="display: none;">
+                            <input type="url" id="gambar_url" placeholder="https://example.com/image.jpg">
+                            <small>Masukkan URL gambar dari internet</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Preview Gambar</label>
+                        <div id="upload-progress" style="display: none; margin: 10px 0;">
+                            <div style="background: #e0e0e0; border-radius: 5px; overflow: hidden;">
+                                <div id="progress-bar" style="background: #3498db; height: 20px; width: 0%; transition: width 0.3s;"></div>
+                            </div>
+                            <small id="progress-text">Uploading...</small>
+                        </div>
+                        <img id="preview-img" src="" alt="Preview" style="max-width: 100%; height: 200px; object-fit: cover; display: none; border-radius: 5px; margin-top: 10px;">
+                    </div>
+                    <div class="form-group">
                         <label>Konten</label>
                         <textarea id="konten" rows="6" required></textarea>
                     </div>
@@ -55,6 +86,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>Gambar</th>
                             <th>Judul</th>
                             <th>Kategori</th>
                             <th>Tanggal</th>
