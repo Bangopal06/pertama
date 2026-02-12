@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Koneksi Supabase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Koneksi Supabase</h1>
+    
+    <div>
+        <button onclick="testConnection()">Test Koneksi</button>
+        <button onclick="testInsert()">Test Insert Berita</button>
+        <button onclick="testSelect()">Test Select Berita</button>
+        <button onclick="clearResult()">Clear</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        const resultDiv = document.getElementById('result');
+        
+        function log(message, isError = false) {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = isError ? 'error' : 'success';
+            resultDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+        }
+        
+        function clearResult() {
+            resultDiv.innerHTML = '';
+        }
+        
+        async function testConnection() {
+            log('Testing Supabase connection...');
+            log('URL: ' + supabase.supabaseUrl);
+            log('Key: ' + supabase.supabaseKey.substring(0, 20) + '...');
+            
+            try {
+                const { data, error } = await supabase
+                    .from('berita')
+                    .select('count');
+                
+                if (error) {
+                    log('Connection ERROR: ' + JSON.stringify(error, null, 2), true);
+                } else {
+                    log('Connection SUCCESS!');
+                    log('Response: ' + JSON.stringify(data, null, 2));
+                }
+            } catch (err) {
+                log('Exception: ' + err.message, true);
+            }
+        }
+        
+        async function testInsert() {
+            log('Testing insert berita...');
+            
+            const testData = {
+                judul: 'Test Berita ' + new Date().toLocaleTimeString(),
+                konten: 'Ini adalah test konten berita',
+                kategori: 'Pengumuman',
+                tanggal: new Date().toISOString()
+            };
+            
+            log('Data to insert: ' + JSON.stringify(testData, null, 2));
+            
+            try {
+                const { data, error } = await supabase
+                    .from('berita')
+                    .insert([testData])
+                    .select();
+                
+                if (error) {
+                    log('Insert ERROR: ' + JSON.stringify(error, null, 2), true);
+                } else {
+                    log('Insert SUCCESS!');
+                    log('Inserted data: ' + JSON.stringify(data, null, 2));
+                }
+            } catch (err) {
+                log('Exception: ' + err.message, true);
+            }
+        }
+        
+        async function testSelect() {
+            log('Testing select berita...');
+            
+            try {
+                const { data, error } = await supabase
+                    .from('berita')
+                    .select('*')
+                    .order('tanggal', { ascending: false });
+                
+                if (error) {
+                    log('Select ERROR: ' + JSON.stringify(error, null, 2), true);
+                } else {
+                    log('Select SUCCESS!');
+                    log('Found ' + (data?.length || 0) + ' records');
+                    log('Data: ' + JSON.stringify(data, null, 2));
+                }
+            } catch (err) {
+                log('Exception: ' + err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

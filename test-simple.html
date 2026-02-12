@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>Test Supabase Simple</h1>
+    <button onclick="test()">Test Insert</button>
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Langsung define di sini
+        const supabaseUrl = 'https://dyawxkqcrzawgfglzbcm.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5YXd4a3Fjcnphd2dmZ2x6YmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NjM2MjgsImV4cCI6MjA4NjMzOTYyOH0.agf23zlfti9UUsTNiK_aQmjnGUiiFOh_3CrUOIbFMaM';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        async function test() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                // Test 1: Check connection
+                result.innerHTML += '<br>1. Testing connection...';
+                const { data: testData, error: testError } = await supabase
+                    .from('berita')
+                    .select('count');
+                
+                if (testError) {
+                    result.innerHTML += '<br>Connection Error: ' + JSON.stringify(testError);
+                    return;
+                }
+                result.innerHTML += '<br>Connection OK!';
+                
+                // Test 2: Insert data
+                result.innerHTML += '<br><br>2. Testing insert...';
+                const { data, error } = await supabase
+                    .from('berita')
+                    .insert([{
+                        judul: 'Test ' + new Date().toLocaleTimeString(),
+                        konten: 'Test konten',
+                        kategori: 'Pengumuman',
+                        tanggal: new Date().toISOString()
+                    }])
+                    .select();
+                
+                if (error) {
+                    result.innerHTML += '<br>Insert Error: ' + JSON.stringify(error);
+                } else {
+                    result.innerHTML += '<br>Insert Success! Data: ' + JSON.stringify(data);
+                }
+                
+                // Test 3: Select data
+                result.innerHTML += '<br><br>3. Testing select...';
+                const { data: allData, error: selectError } = await supabase
+                    .from('berita')
+                    .select('*');
+                
+                if (selectError) {
+                    result.innerHTML += '<br>Select Error: ' + JSON.stringify(selectError);
+                } else {
+                    result.innerHTML += '<br>Select Success! Found ' + allData.length + ' records';
+                    result.innerHTML += '<br>Data: ' + JSON.stringify(allData, null, 2);
+                }
+                
+            } catch (err) {
+                result.innerHTML += '<br>Exception: ' + err.message;
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
