@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Berita - SMA Negeri 1</title>
+    <title>Program Unggulan - SMA Negeri 1</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,8 +13,8 @@
             <ul class="nav-menu">
                 <li><a href="index.html">Beranda</a></li>
                 <li><a href="profil.html">Profil</a></li>
-                <li><a href="program.html">Program</a></li>
-                <li><a href="berita.html" class="active">Berita</a></li>
+                <li><a href="program.html" class="active">Program</a></li>
+                <li><a href="berita.html">Berita</a></li>
                 <li><a href="ppdb.html">PPDB</a></li>
                 <li><a href="kontak.html">Kontak</a></li>
                 <li><a href="admin/login.html" class="btn-admin">Admin</a></li>
@@ -23,12 +23,14 @@
     </nav>
 
     <section class="page-header">
-        <h1>Berita Sekolah</h1>
+        <h1>Program Unggulan</h1>
     </section>
 
     <section class="content-section">
         <div class="container">
-            <div id="all-news" class="news-grid"></div>
+            <div id="program-detail-grid" class="program-detail-grid">
+                <!-- Program akan dimuat dari database -->
+            </div>
         </div>
     </section>
 
@@ -40,6 +42,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/db-config.js"></script>
-    <script src="js/berita.js"></script>
+    <script src="js/program.js"></script>
 </body>
 </html>

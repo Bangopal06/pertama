@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Berita - Admin</title>
+    <title>Kelola Program - Admin</title>
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
@@ -12,28 +12,28 @@
             <div class="logo">Admin Panel</div>
             <nav class="admin-nav">
                 <a href="dashboard.html">Dashboard</a>
-                <a href="berita.html" class="active">Kelola Berita</a>
-                <a href="program.html">Kelola Program</a>
+                <a href="berita.html">Kelola Berita</a>
+                <a href="program.html" class="active">Kelola Program</a>
                 <a href="ppdb.html">Data PPDB</a>
                 <a href="#" id="logout">Logout</a>
             </nav>
         </aside>
         <main class="main-content">
             <header class="content-header">
-                <h1>Kelola Berita</h1>
-                <button class="btn-primary" id="btn-tambah">Tambah Berita</button>
+                <h1>Kelola Program Unggulan</h1>
+                <button class="btn-primary" id="btn-tambah">Tambah Program</button>
             </header>
             
-            <div id="form-berita" class="form-container" style="display:none;">
-                <h2 id="form-title">Tambah Berita Baru</h2>
-                <form id="berita-form">
-                    <input type="hidden" id="berita-id">
+            <div id="form-program" class="form-container" style="display:none;">
+                <h2 id="form-title">Tambah Program Baru</h2>
+                <form id="program-form">
+                    <input type="hidden" id="program-id">
                     <div class="form-group">
-                        <label>Judul</label>
+                        <label>Judul Program</label>
                         <input type="text" id="judul" required>
                     </div>
                     <div class="form-group">
-                        <label>Gambar Berita</label>
+                        <label>Gambar Program</label>
                         <div style="margin-bottom: 10px;">
                             <label style="display: inline-flex; align-items: center; margin-right: 20px;">
                                 <input type="radio" name="image-type" value="file" checked style="margin-right: 5px;">
@@ -64,17 +64,27 @@
                         <img id="preview-img" src="" alt="Preview" style="max-width: 100%; height: 200px; object-fit: cover; display: none; border-radius: 5px; margin-top: 10px;">
                     </div>
                     <div class="form-group">
-                        <label>Konten</label>
-                        <textarea id="konten" rows="6" required></textarea>
+                        <label>Deskripsi Singkat</label>
+                        <textarea id="deskripsi" rows="3" required placeholder="Deskripsi singkat untuk ditampilkan di card"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Kategori</label>
-                        <select id="kategori" required>
-                            <option value="Akademik">Akademik</option>
-                            <option value="Prestasi">Prestasi</option>
-                            <option value="Kegiatan">Kegiatan</option>
-                            <option value="Pengumuman">Pengumuman</option>
-                        </select>
+                        <label>Deskripsi Lengkap</label>
+                        <textarea id="deskripsi_lengkap" rows="4" placeholder="Deskripsi lengkap untuk halaman detail"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Kegiatan Program (satu per baris)</label>
+                        <textarea id="kegiatan" rows="5" placeholder="Masukkan kegiatan, satu per baris&#10;Contoh:&#10;Tahfidz Al-Qur'an&#10;Kajian Tafsir"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Urutan</label>
+                        <input type="number" id="urutan" value="0" min="0">
+                        <small>Urutan tampilan program (angka lebih kecil tampil lebih dulu)</small>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" id="aktif" checked style="margin-right: 10px;">
+                            Program Aktif (tampilkan di website)
+                        </label>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary">Simpan</button>
@@ -87,20 +97,20 @@
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>Urutan</th>
                             <th>Gambar</th>
                             <th>Judul</th>
-                            <th>Kategori</th>
-                            <th>Tanggal</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="berita-list"></tbody>
+                    <tbody id="program-list"></tbody>
                 </table>
             </div>
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/db-config.js"></script>
-    <script src="../js/admin-berita.js"></script>
+    <script src="../js/admin-program.js"></script>
 </body>
 </html>
