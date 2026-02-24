@@ -15,16 +15,29 @@ async function loadNews() {
             return;
         }
         
-        newsContainer.innerHTML = berita.map(b => `
-            <div class="news-card">
-                <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}" alt="${b.judul}" class="news-image">
-                <div class="news-content">
-                    <h3>${b.judul}</h3>
-                    <p class="news-meta">${b.kategori} - ${new Date(b.tanggal).toLocaleDateString('id-ID')}</p>
-                    <p>${b.konten.substring(0, 150)}...</p>
+        newsContainer.innerHTML = berita.map(b => {
+            // Batasi konten menjadi excerpt (120 karakter untuk homepage)
+            const excerpt = b.konten.length > 120 
+                ? b.konten.substring(0, 120) + '...' 
+                : b.konten;
+            
+            return `
+                <div class="news-card">
+                    <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}" alt="${b.judul}" class="news-image">
+                    <div class="news-content">
+                        <span class="news-category">${b.kategori}</span>
+                        <h3>${b.judul}</h3>
+                        <p class="news-meta">${new Date(b.tanggal).toLocaleDateString('id-ID', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}</p>
+                        <p class="news-excerpt">${excerpt}</p>
+                        <a href="berita-detail.html?id=${b.id}" class="btn-read-more">Baca Selengkapnya →</a>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     } catch (error) {
         console.error('Error loading news:', error);
         newsContainer.innerHTML = '<p>Gagal memuat berita.</p>';

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Berita</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #2d3748;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Koneksi & Data Berita</h1>
+    
+    <button onclick="testConnection()">Test Koneksi Database</button>
+    <button onclick="testBerita()">Test Load Berita</button>
+    <button onclick="addSampleBerita()">Tambah Berita Sample</button>
+    
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="result">⏳ Testing koneksi...</div>';
+            
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('berita')
+                    .select('count');
+                
+                if (error) throw error;
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h3>✅ Koneksi Berhasil!</h3>
+                        <p>Database terhubung dengan baik.</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Koneksi Gagal!</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Pastikan database sudah di-setup dengan benar.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function testBerita() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="result">⏳ Loading berita...</div>';
+            
+            try {
+                const { data: berita, error } = await window.supabaseClient
+                    .from('berita')
+                    .select('*')
+                    .order('tanggal', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!berita || berita.length === 0) {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h3>⚠️ Tidak Ada Berita</h3>
+                            <p>Database kosong. Silakan tambah berita sample atau buat berita baru di admin panel.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h3>✅ Berita Ditemukan!</h3>
+                        <p>Total berita: <strong>${berita.length}</strong></p>
+                        <h4>Data Berita:</h4>
+                        <pre>${JSON.stringify(berita, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Error!</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function addSampleBerita() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="result">⏳ Menambah berita sample...</div>';
+            
+            try {
+                const sampleBerita = [
+                    {
+                        judul: 'Pembukaan PPDB Tahun Ajaran 2024/2025',
+                        konten: 'SMA Negeri 1 membuka pendaftaran peserta didik baru untuk tahun ajaran 2024/2025. Pendaftaran dibuka mulai 1 Juni hingga 30 Juni 2024. Calon siswa dapat mendaftar secara online melalui website sekolah.',
+                        kategori: 'Pengumuman',
+                        gambar_url: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800',
+                        tanggal: new Date().toISOString()
+                    },
+                    {
+                        judul: 'Prestasi Siswa di Olimpiade Sains Nasional',
+                        konten: 'Siswa SMA Negeri 1 berhasil meraih medali emas dalam Olimpiade Sains Nasional bidang Matematika. Prestasi ini merupakan hasil kerja keras dan dedikasi siswa serta pembinaan dari guru-guru yang kompeten.',
+                        kategori: 'Prestasi',
+                        gambar_url: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800',
+                        tanggal: new Date().toISOString()
+                    },
+                    {
+                        judul: 'Kegiatan Bakti Sosial',
+                        konten: 'SMA Negeri 1 mengadakan kegiatan bakti sosial di desa sekitar sekolah sebagai bentuk kepedulian terhadap masyarakat. Kegiatan ini meliputi pembagian sembako dan layanan kesehatan gratis.',
+                        kategori: 'Kegiatan',
+                        gambar_url: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800',
+                        tanggal: new Date().toISOString()
+                    }
+                ];
+                
+                const { data, error } = await window.supabaseClient
+                    .from('berita')
+                    .insert(sampleBerita)
+                    .select();
+                
+                if (error) throw error;
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h3>✅ Berita Sample Berhasil Ditambahkan!</h3>
+                        <p>Total berita ditambahkan: <strong>${data.length}</strong></p>
+                        <p>Silakan refresh halaman index.html untuk melihat berita.</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Gagal Menambah Berita!</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
