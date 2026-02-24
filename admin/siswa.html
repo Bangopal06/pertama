@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Data Siswa - Admin Panel</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/admin-siswa.css">
+    <style>
+        .siswa-card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .dokumen-list, .pembayaran-list {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .status-pending { background: #ffc107; color: #000; }
+        .status-verified { background: #28a745; color: white; }
+        .status-rejected { background: #dc3545; color: white; }
+        .status-belum_bayar { background: #6c757d; color: white; }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+                <a href="berita.html" class="nav-item">📰 Berita</a>
+                <a href="program.html" class="nav-item">🎯 Program</a>
+                <a href="ppdb.html" class="nav-item">📝 PPDB</a>
+                <a href="siswa.html" class="nav-item active">👥 Data Siswa</a>
+                <a href="#" class="nav-item" onclick="logout()">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Kelola Data Siswa</h1>
+                <div class="user-info">
+                    <span id="admin-name">Admin</span>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="filter-section">
+                    <input type="text" id="search-siswa" placeholder="Cari nama atau NISN..." style="padding: 10px; width: 300px; border: 1px solid #ddd; border-radius: 5px;">
+                    <select id="filter-status" style="padding: 10px; margin-left: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="">Semua Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="verified">Verified</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <div id="siswa-list">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Detail -->
+    <div id="modal-detail" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Detail Siswa</h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/admin-siswa.js"></script>
+</body>
+</html>

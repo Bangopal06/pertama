@@ -260,8 +260,16 @@ async function uploadImage(file) {
 }
 
 async function loadBerita() {
+    const tbody = document.getElementById('berita-list');
+    
     try {
         console.log('Loading berita...');
+        
+        // Cek apakah Supabase client tersedia
+        if (!window.supabaseClient) {
+            tbody.innerHTML = '<tr><td colspan="5" style="color: red;">Supabase client tidak tersedia. Cek konfigurasi.</td></tr>';
+            return;
+        }
         
         const { data: berita, error } = await window.supabaseClient
             .from('berita')
@@ -270,12 +278,14 @@ async function loadBerita() {
         
         console.log('Load berita response:', { berita, error });
         
-        if (error) throw error;
-        
-        const tbody = document.getElementById('berita-list');
+        if (error) {
+            console.error('Database error:', error);
+            tbody.innerHTML = `<tr><td colspan="5" style="color: red;">Error: ${error.message}<br><small>Pastikan tabel 'berita' sudah dibuat di Supabase</small></td></tr>`;
+            return;
+        }
         
         if (!berita || berita.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">Belum ada berita</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5">Belum ada berita. Klik "Tambah Berita" untuk membuat berita baru.</td></tr>';
             return;
         }
         
@@ -292,8 +302,8 @@ async function loadBerita() {
             </tr>
         `).join('');
     } catch (error) {
-        console.error('Error loading berita:', error);
-        alert('Error loading berita: ' + error.message);
+        console.error('Exception loading berita:', error);
+        tbody.innerHTML = `<tr><td colspan="5" style="color: red;">Error: ${error.message}<br><small>Cek console browser (F12) untuk detail</small></td></tr>`;
     }
 }
 

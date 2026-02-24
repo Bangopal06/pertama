@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Siswa - Portal PPDB</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Portal Siswa</h1>
+            <p class="subtitle">Masuk dengan username dan password yang dikirim ke email Anda</p>
+            
+            <form id="siswa-login-form">
+                <div class="form-group">
+                    <label for="username">Username / No. Pendaftaran</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Masuk</button>
+            </form>
+            
+            <p class="help-text">
+                Belum punya akun? <a href="../ppdb.html">Daftar PPDB</a><br>
+                Lupa password? Hubungi admin sekolah
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/siswa-login.js"></script>
+</body>
+</html>

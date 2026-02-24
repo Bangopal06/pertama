@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Cepat - Portal Siswa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border-left: 5px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .info-box h3 {
+            margin: 0 0 15px 0;
+            color: #007bff;
+        }
+        .info-box p {
+            margin: 8px 0;
+            color: #333;
+        }
+        .info-box strong {
+            color: #007bff;
+            font-size: 18px;
+        }
+        .btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        .btn-secondary {
+            background: #007bff;
+        }
+        .btn-secondary:hover {
+            background: #0056b3;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .alert {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Portal Siswa</h1>
+        <p class="subtitle">Login dengan kredensial yang Anda terima</p>
+
+        <div class="alert">
+            ✅ Pendaftaran berhasil! Silakan login dengan informasi di bawah
+        </div>
+
+        <div class="info-box">
+            <h3>📋 Informasi Login Anda:</h3>
+            <p><strong>No. Pendaftaran:</strong> PPDB01294395</p>
+            <p><strong>Username:</strong> 99</p>
+            <p><strong>Password:</strong> ueeugd1l</p>
+        </div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Username / No. Pendaftaran</label>
+                <input type="text" id="username" name="username" value="99" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" value="ueeugd1l" required>
+            </div>
+            
+            <button type="submit" class="btn">🚀 MASUK KE DASHBOARD</button>
+        </form>
+
+        <button class="btn btn-secondary" onclick="window.location.href='siswa/login.html'">
+            📱 Buka Halaman Login Resmi
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Memproses...';
+            
+            try {
+                // Cari siswa berdasarkan username dan password
+                const { data, error } = await window.supabaseClient
+                    .from('ppdb')
+                    .select('*')
+                    .or(`username.eq.${username},no_pendaftaran.eq.${username}`)
+                    .eq('password', password)
+                    .single();
+                
+                if (error || !data) {
+                    alert('Username atau password salah!');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '🚀 MASUK KE DASHBOARD';
+                    return;
+                }
+                
+                // Simpan session
+                localStorage.setItem('siswa_id', data.id);
+                localStorage.setItem('siswa_nama', data.nama);
+                localStorage.setItem('siswa_username', data.username || data.no_pendaftaran);
+                
+                // Redirect ke dashboard
+                window.location.href = 'siswa/dashboard.html';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 MASUK KE DASHBOARD';
+            }
+        });
+    </script>
+</body>
+</html>

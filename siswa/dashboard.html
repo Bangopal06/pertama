@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Siswa - Portal PPDB</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/siswa.css">
+    <style>
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-pending { background: #ffc107; color: #000; }
+        .status-verified { background: #28a745; color: white; }
+        .status-rejected { background: #dc3545; color: white; }
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .payment-item {
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Portal Siswa</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="profil">📋 Data Profil</a>
+                <a href="#" class="nav-item" data-page="dokumen">📁 Upload Dokumen</a>
+                <a href="#" class="nav-item" data-page="pembayaran">💳 Pembayaran</a>
+                <a href="#" class="nav-item" onclick="logout()">🚪 Keluar</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1 id="page-title">Data Profil Saya</h1>
+                <div class="user-info">
+                    <span id="user-name">Loading...</span>
+                </div>
+            </header>
+
+            <!-- Profil Section -->
+            <section id="profil-section" class="content-section">
+                <div class="info-card">
+                    <h3>Informasi Pendaftaran</h3>
+                    <p><strong>No. Pendaftaran:</strong> <span id="no-pendaftaran">-</span></p>
+                    <p><strong>Status:</strong> <span id="status-pendaftaran" class="status-badge">-</span></p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Data Pribadi</h3>
+                    <table class="data-table">
+                        <tr><td><strong>Nama Lengkap</strong></td><td id="data-nama">-</td></tr>
+                        <tr><td><strong>NISN</strong></td><td id="data-nisn">-</td></tr>
+                        <tr><td><strong>Tempat, Tanggal Lahir</strong></td><td id="data-ttl">-</td></tr>
+                        <tr><td><strong>Jenis Kelamin</strong></td><td id="data-jk">-</td></tr>
+                        <tr><td><strong>Asal Sekolah</strong></td><td id="data-sekolah">-</td></tr>
+                        <tr><td><strong>Alamat</strong></td><td id="data-alamat">-</td></tr>
+                        <tr><td><strong>Telepon</strong></td><td id="data-telepon">-</td></tr>
+                        <tr><td><strong>Email</strong></td><td id="data-email">-</td></tr>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Dokumen Section -->
+            <section id="dokumen-section" class="content-section" style="display:none;">
+                <div class="info-card">
+                    <h3>Upload Dokumen Persyaratan</h3>
+                    <p>Silakan upload dokumen-dokumen berikut (format: PDF, JPG, PNG, max 2MB):</p>
+                    
+                    <div class="dokumen-group">
+                        <h4>1. Kartu Keluarga</h4>
+                        <div class="upload-area" id="upload-kk">
+                            <input type="file" id="file-kk" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
+                            <p>📄 Klik atau drag file ke sini</p>
+                            <button onclick="document.getElementById('file-kk').click()" class="btn-secondary">Pilih File</button>
+                        </div>
+                        <div id="file-kk-list"></div>
+                    </div>
+
+                    <div class="dokumen-group">
+                        <h4>2. Akta Kelahiran</h4>
+                        <div class="upload-area" id="upload-akta">
+                            <input type="file" id="file-akta" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
+                            <p>📄 Klik atau drag file ke sini</p>
+                            <button onclick="document.getElementById('file-akta').click()" class="btn-secondary">Pilih File</button>
+                        </div>
+                        <div id="file-akta-list"></div>
+                    </div>
+
+                    <div class="dokumen-group">
+                        <h4>3. Ijazah / SKHUN</h4>
+                        <div class="upload-area" id="upload-ijazah">
+                            <input type="file" id="file-ijazah" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
+                            <p>📄 Klik atau drag file ke sini</p>
+                            <button onclick="document.getElementById('file-ijazah').click()" class="btn-secondary">Pilih File</button>
+                        </div>
+                        <div id="file-ijazah-list"></div>
+                    </div>
+
+                    <div class="dokumen-group">
+                        <h4>4. Pas Foto 3x4</h4>
+                        <div class="upload-area" id="upload-foto">
+                            <input type="file" id="file-foto" accept=".jpg,.jpeg,.png" style="display:none">
+                            <p>📷 Klik atau drag file ke sini</p>
+                            <button onclick="document.getElementById('file-foto').click()" class="btn-secondary">Pilih File</button>
+                        </div>
+                        <div id="file-foto-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pembayaran Section -->
+            <section id="pembayaran-section" class="content-section" style="display:none;">
+                <div class="info-card">
+                    <h3>Informasi Pembayaran</h3>
+                    <div id="pembayaran-list">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>Upload Bukti Pembayaran</h3>
+                    <div class="form-group">
+                        <label>Jenis Pembayaran</label>
+                        <select id="jenis-pembayaran">
+                            <option value="">Pilih Jenis Pembayaran</option>
+                            <option value="Biaya Pendaftaran">Biaya Pendaftaran</option>
+                        </select>
+                    </div>
+                    <div class="upload-area">
+                        <input type="file" id="file-bukti-bayar" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
+                        <p>📄 Upload bukti transfer (PDF/JPG/PNG, max 2MB)</p>
+                        <button onclick="document.getElementById('file-bukti-bayar').click()" class="btn-secondary">Pilih File</button>
+                    </div>
+                    <button id="btn-upload-bukti" class="btn-primary" style="margin-top:15px;">Upload Bukti Pembayaran</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/siswa-dashboard.js"></script>
+</body>
+</html>

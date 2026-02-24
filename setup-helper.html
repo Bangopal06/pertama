@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Helper - Portal Siswa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .step p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .sql-box {
+            background: #2d3748;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 5px solid #28a745;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 5px solid #ffc107;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .checklist li:hover {
+            background: #e9ecef;
+        }
+        .checklist li.checked {
+            background: #d4edda;
+            color: #155724;
+            text-decoration: line-through;
+        }
+        .checklist li::before {
+            content: '☐ ';
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .checklist li.checked::before {
+            content: '✅ ';
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-pending { background: #ffc107; }
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .test-section {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .test-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .test-result.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Setup Helper - Portal Siswa</h1>
+        <p class="subtitle">Panduan interaktif untuk setup database dan storage Supabase</p>
+
+        <!-- Step 1 -->
+        <div class="step">
+            <h2>📋 Step 1: Copy SQL Setup</h2>
+            <p>Copy SQL berikut dan paste ke Supabase SQL Editor:</p>
+            <div class="sql-box" id="sql-content">-- SQL akan dimuat dari file...</div>
+            <button class="copy-btn" onclick="copySQLToClipboard()">📋 Copy SQL ke Clipboard</button>
+            <div class="success" style="display:none;" id="copy-success">✅ SQL berhasil dicopy! Sekarang paste ke Supabase SQL Editor dan klik RUN</div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step">
+            <h2>🔗 Step 2: Buka Supabase Dashboard</h2>
+            <p>Klik tombol di bawah untuk membuka Supabase Dashboard:</p>
+            <button class="btn-primary" onclick="window.open('https://supabase.com/dashboard', '_blank')">
+                🌐 Buka Supabase Dashboard
+            </button>
+            <div class="warning">
+                <strong>⚠️ Catatan:</strong> Pastikan Anda sudah login ke akun Supabase Anda
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step">
+            <h2>⚙️ Step 3: Jalankan SQL</h2>
+            <p>Di Supabase Dashboard:</p>
+            <ol style="margin-left: 20px; line-height: 2;">
+                <li>Klik <strong>"SQL Editor"</strong> di sidebar kiri</li>
+                <li>Klik <strong>"New query"</strong></li>
+                <li>Paste SQL yang sudah dicopy</li>
+                <li>Klik tombol <strong>"RUN"</strong> (atau Ctrl+Enter)</li>
+                <li>Tunggu sampai muncul pesan "Success"</li>
+            </ol>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step">
+            <h2>✅ Step 4: Verifikasi Setup</h2>
+            <p>Centang item berikut setelah Anda verifikasi di Supabase:</p>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)">Tabel ppdb memiliki kolom: username, password, status, no_pendaftaran</li>
+                <li onclick="toggleCheck(this)">Tabel siswa_dokumen sudah dibuat</li>
+                <li onclick="toggleCheck(this)">Tabel siswa_pembayaran sudah dibuat</li>
+                <li onclick="toggleCheck(this)">Bucket dokumen-siswa sudah dibuat</li>
+                <li onclick="toggleCheck(this)">Bucket bukti-pembayaran sudah dibuat</li>
+                <li onclick="toggleCheck(this)">Policy storage untuk dokumen-siswa aktif</li>
+                <li onclick="toggleCheck(this)">Policy storage untuk bukti-pembayaran aktif</li>
+            </ul>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step">
+            <h2>🧪 Step 5: Test Koneksi</h2>
+            <div class="test-section">
+                <p><strong>Test koneksi ke Supabase:</strong></p>
+                <button class="btn-primary" onclick="testConnection()">🔌 Test Koneksi</button>
+                <div class="test-result" id="test-result"></div>
+            </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step">
+            <h2>🎯 Step 6: Test Pendaftaran</h2>
+            <p>Sekarang test sistem dengan mendaftar siswa baru:</p>
+            <button class="btn-primary" onclick="window.open('ppdb.html', '_blank')">
+                📝 Buka Form Pendaftaran
+            </button>
+            <div class="warning" style="margin-top: 15px;">
+                <strong>💡 Tips:</strong> Setelah daftar, simpan username dan password yang muncul untuk test login
+            </div>
+        </div>
+
+        <!-- Step 7 -->
+        <div class="step">
+            <h2>🎉 Setup Selesai!</h2>
+            <p>Jika semua checklist sudah ✅, sistem portal siswa Anda sudah siap!</p>
+            <div class="success">
+                <strong>Langkah selanjutnya:</strong><br>
+                1. Test login di <a href="siswa/login.html" target="_blank">Portal Siswa</a><br>
+                2. Test upload dokumen dan pembayaran<br>
+                3. Test verifikasi di <a href="admin/siswa.html" target="_blank">Admin Panel</a>
+            </div>
+            <button class="btn-primary" onclick="window.open('siswa/login.html', '_blank')">
+                👨‍🎓 Buka Portal Siswa
+            </button>
+            <button class="btn-secondary" onclick="window.open('admin/siswa.html', '_blank')">
+                👨‍💼 Buka Admin Panel
+            </button>
+        </div>
+
+        <!-- Documentation -->
+        <div class="step">
+            <h2>📚 Dokumentasi</h2>
+            <p>Baca dokumentasi lengkap untuk informasi lebih detail:</p>
+            <button class="btn-secondary" onclick="window.open('PANDUAN-SETUP-SUPABASE.md', '_blank')">
+                📖 Panduan Setup Supabase
+            </button>
+            <button class="btn-secondary" onclick="window.open('CARA-GUNAKAN-PORTAL-SISWA.md', '_blank')">
+                📖 Cara Gunakan Portal Siswa
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        // Load SQL content
+        fetch('SETUP-LENGKAP-SUPABASE.sql')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('sql-content').textContent = data;
+            })
+            .catch(error => {
+                document.getElementById('sql-content').textContent = 'Error loading SQL file. Please open SETUP-LENGKAP-SUPABASE.sql manually.';
+            });
+
+        // Copy SQL to clipboard
+        function copySQLToClipboard() {
+            const sqlContent = document.getElementById('sql-content').textContent;
+            navigator.clipboard.writeText(sqlContent).then(() => {
+                document.getElementById('copy-success').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('copy-success').style.display = 'none';
+                }, 5000);
+            });
+        }
+
+        // Toggle checklist
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+        }
+
+        // Test connection
+        async function testConnection() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.className = 'test-result show';
+            resultDiv.innerHTML = '<p>🔄 Testing koneksi ke Supabase...</p>';
+            
+            try {
+                // Test koneksi ke tabel ppdb
+                const { data, error } = await window.supabaseClient
+                    .from('ppdb')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                // Test tabel siswa_dokumen
+                const { error: error2 } = await window.supabaseClient
+                    .from('siswa_dokumen')
+                    .select('count')
+                    .limit(1);
+                
+                if (error2) throw error2;
+                
+                // Test tabel siswa_pembayaran
+                const { error: error3 } = await window.supabaseClient
+                    .from('siswa_pembayaran')
+                    .select('count')
+                    .limit(1);
+                
+                if (error3) throw error3;
+                
+                resultDiv.style.background = '#d4edda';
+                resultDiv.style.color = '#155724';
+                resultDiv.innerHTML = `
+                    <strong>✅ Koneksi Berhasil!</strong><br>
+                    - Tabel ppdb: OK<br>
+                    - Tabel siswa_dokumen: OK<br>
+                    - Tabel siswa_pembayaran: OK<br>
+                    <br>
+                    Database sudah siap digunakan! 🎉
+                `;
+                
+            } catch (error) {
+                resultDiv.style.background = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+                resultDiv.innerHTML = `
+                    <strong>❌ Koneksi Gagal!</strong><br>
+                    Error: ${error.message}<br>
+                    <br>
+                    <strong>Solusi:</strong><br>
+                    1. Pastikan SQL sudah dijalankan di Supabase<br>
+                    2. Cek konfigurasi di js/supabase-config.js<br>
+                    3. Refresh halaman ini dan coba lagi
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Database - Portal Siswa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 5px solid #ccc;
+        }
+        .test-item.loading {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        .test-item.success {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .test-item.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .sql-box {
+            background: #2d3748;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .info {
+            background: #d1ecf1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 5px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Database Setup</h1>
+        <p>Tool ini akan mengecek apakah database sudah di-setup dengan benar.</p>
+        
+        <button class="btn" onclick="runTests()">▶️ Jalankan Test</button>
+        <button class="btn btn-success" onclick="copySQL()">📋 Copy SQL Setup</button>
+        
+        <div id="results"></div>
+        
+        <div id="sql-section" style="display:none;">
+            <h3>SQL yang Perlu Dijalankan:</h3>
+            <div class="info">
+                <strong>⚠️ Langkah-langkah:</strong><br>
+                1. Klik tombol "Copy SQL Setup" di atas<br>
+                2. Buka <a href="https://supabase.com/dashboard" target="_blank">Supabase Dashboard</a><br>
+                3. Pilih project Anda<br>
+                4. Klik "SQL Editor" → "New query"<br>
+                5. Paste SQL dan klik "RUN"<br>
+                6. Kembali ke halaman ini dan klik "Jalankan Test" lagi
+            </div>
+            <div class="sql-box" id="sql-content"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        const sqlSetup = `-- ============================================
+-- SETUP LENGKAP DATABASE + STORAGE SUPABASE
+-- UNTUK PORTAL SISWA
+-- ============================================
+
+-- BAGIAN 1: UPDATE TABEL PPDB
+ALTER TABLE ppdb 
+ADD COLUMN IF NOT EXISTS username TEXT UNIQUE,
+ADD COLUMN IF NOT EXISTS password TEXT,
+ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending',
+ADD COLUMN IF NOT EXISTS no_pendaftaran TEXT UNIQUE;
+
+-- BAGIAN 2: TABEL DOKUMEN SISWA
+CREATE TABLE IF NOT EXISTS siswa_dokumen (
+  id BIGSERIAL PRIMARY KEY,
+  ppdb_id BIGINT REFERENCES ppdb(id) ON DELETE CASCADE,
+  jenis_dokumen TEXT NOT NULL,
+  nama_file TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  ukuran_file INTEGER,
+  status TEXT DEFAULT 'pending',
+  catatan TEXT,
+  uploaded_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE siswa_dokumen DISABLE ROW LEVEL SECURITY;
+
+-- BAGIAN 3: TABEL PEMBAYARAN SISWA
+CREATE TABLE IF NOT EXISTS siswa_pembayaran (
+  id BIGSERIAL PRIMARY KEY,
+  ppdb_id BIGINT REFERENCES ppdb(id) ON DELETE CASCADE,
+  jenis_pembayaran TEXT NOT NULL,
+  jumlah DECIMAL(12,2) NOT NULL,
+  status TEXT DEFAULT 'belum_bayar',
+  bukti_url TEXT,
+  tanggal_bayar TIMESTAMPTZ,
+  tanggal_verifikasi TIMESTAMPTZ,
+  catatan TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE siswa_pembayaran DISABLE ROW LEVEL SECURITY;
+
+-- BAGIAN 4: SETUP STORAGE BUCKETS
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('dokumen-siswa', 'dokumen-siswa', true)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('bukti-pembayaran', 'bukti-pembayaran', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- BAGIAN 5: STORAGE POLICIES
+CREATE POLICY IF NOT EXISTS "Allow public upload dokumen-siswa"
+ON storage.objects FOR INSERT
+TO public
+WITH CHECK (bucket_id = 'dokumen-siswa');
+
+CREATE POLICY IF NOT EXISTS "Allow public read dokumen-siswa"
+ON storage.objects FOR SELECT
+TO public
+USING (bucket_id = 'dokumen-siswa');
+
+CREATE POLICY IF NOT EXISTS "Allow public delete dokumen-siswa"
+ON storage.objects FOR DELETE
+TO public
+USING (bucket_id = 'dokumen-siswa');
+
+CREATE POLICY IF NOT EXISTS "Allow public upload bukti-pembayaran"
+ON storage.objects FOR INSERT
+TO public
+WITH CHECK (bucket_id = 'bukti-pembayaran');
+
+CREATE POLICY IF NOT EXISTS "Allow public read bukti-pembayaran"
+ON storage.objects FOR SELECT
+TO public
+USING (bucket_id = 'bukti-pembayaran');
+
+CREATE POLICY IF NOT EXISTS "Allow public delete bukti-pembayaran"
+ON storage.objects FOR DELETE
+TO public
+USING (bucket_id = 'bukti-pembayaran');`;
+
+        async function runTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h3>Hasil Test:</h3>';
+            
+            const tests = [
+                { name: 'Koneksi ke Supabase', test: testConnection },
+                { name: 'Tabel PPDB', test: testPPDBTable },
+                { name: 'Kolom Username di PPDB', test: testPPDBColumns },
+                { name: 'Tabel siswa_dokumen', test: testDokumenTable },
+                { name: 'Tabel siswa_pembayaran', test: testPembayaranTable },
+                { name: 'Storage Bucket dokumen-siswa', test: testDokumenBucket },
+                { name: 'Storage Bucket bukti-pembayaran', test: testPembayaranBucket }
+            ];
+            
+            let allPassed = true;
+            
+            for (const test of tests) {
+                const testDiv = document.createElement('div');
+                testDiv.className = 'test-item loading';
+                testDiv.innerHTML = `⏳ Testing: ${test.name}...`;
+                resultsDiv.appendChild(testDiv);
+                
+                try {
+                    const result = await test.test();
+                    testDiv.className = 'test-item success';
+                    testDiv.innerHTML = `✅ ${test.name}: ${result}`;
+                } catch (error) {
+                    allPassed = false;
+                    testDiv.className = 'test-item error';
+                    testDiv.innerHTML = `❌ ${test.name}: ${error.message}`;
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            if (!allPassed) {
+                document.getElementById('sql-section').style.display = 'block';
+                document.getElementById('sql-content').textContent = sqlSetup;
+            } else {
+                const successDiv = document.createElement('div');
+                successDiv.className = 'test-item success';
+                successDiv.innerHTML = '<h3>🎉 Semua Test Berhasil!</h3><p>Database sudah siap digunakan. Silakan test pendaftaran siswa di <a href="ppdb.html">ppdb.html</a></p>';
+                resultsDiv.appendChild(successDiv);
+            }
+        }
+        
+        async function testConnection() {
+            const { data, error } = await window.supabaseClient.from('ppdb').select('count').limit(1);
+            if (error) throw error;
+            return 'OK';
+        }
+        
+        async function testPPDBTable() {
+            const { data, error } = await window.supabaseClient.from('ppdb').select('*').limit(1);
+            if (error) throw error;
+            return 'Tabel ada';
+        }
+        
+        async function testPPDBColumns() {
+            // Test insert dengan kolom baru
+            const testData = {
+                nama: 'Test',
+                nisn: 'TEST' + Date.now(),
+                tempat_lahir: 'Test',
+                tanggal_lahir: '2000-01-01',
+                jenis_kelamin: 'L',
+                asal_sekolah: 'Test',
+                alamat: 'Test',
+                telepon: '123',
+                email: 'test@test.com',
+                username: 'test' + Date.now(),
+                password: 'test123',
+                no_pendaftaran: 'TEST' + Date.now(),
+                status: 'pending'
+            };
+            
+            const { data, error } = await window.supabaseClient
+                .from('ppdb')
+                .insert([testData])
+                .select();
+            
+            if (error) throw error;
+            
+            // Hapus data test
+            if (data && data[0]) {
+                await window.supabaseClient.from('ppdb').delete().eq('id', data[0].id);
+            }
+            
+            return 'Kolom username, password, status, no_pendaftaran ada';
+        }
+        
+        async function testDokumenTable() {
+            const { data, error } = await window.supabaseClient.from('siswa_dokumen').select('count').limit(1);
+            if (error) throw error;
+            return 'Tabel ada';
+        }
+        
+        async function testPembayaranTable() {
+            const { data, error } = await window.supabaseClient.from('siswa_pembayaran').select('count').limit(1);
+            if (error) throw error;
+            return 'Tabel ada';
+        }
+        
+        async function testDokumenBucket() {
+            const { data, error } = await window.supabaseClient.storage.getBucket('dokumen-siswa');
+            if (error) throw error;
+            return 'Bucket ada';
+        }
+        
+        async function testPembayaranBucket() {
+            const { data, error } = await window.supabaseClient.storage.getBucket('bukti-pembayaran');
+            if (error) throw error;
+            return 'Bucket ada';
+        }
+        
+        function copySQL() {
+            navigator.clipboard.writeText(sqlSetup).then(() => {
+                alert('✅ SQL berhasil dicopy!\n\nSekarang:\n1. Buka Supabase Dashboard\n2. Klik SQL Editor → New query\n3. Paste dan klik RUN');
+            });
+        }
+    </script>
+</body>
+</html>

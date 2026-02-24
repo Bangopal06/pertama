@@ -60,9 +60,14 @@ body {
 }
 
 .hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Tempel link dari Supabase di dalam url() */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                      url('https://dyawxkqcrzawgfglzbcm.supabase.co/storage/v1/object/sign/gambar/IMG_2115.JPG?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iZDg4Y2FjZC1jYjAxLTQwZTctOTQwMC03ODlkZWMwMjQ4NjkiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJnYW1iYXIvSU1HXzIxMTUuSlBHIiwiaWF0IjoxNzcxODk5MDA0LCJleHAiOjE4MDM0MzUwMDR9.mA2Qk85v5MX7Ag8-5Foxhvso7QR5_doxFf0tzaHQxPw');
+    
+    background-size: cover;
+    background-position: center;
     color: white;
-    padding: 8rem 2rem;
+    padding: 15rem 2rem;
     text-align: center;
 }
 
