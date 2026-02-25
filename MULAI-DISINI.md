@@ -53,7 +53,7 @@
    - Simpan username & password yang muncul
 
 2. **Login Portal Siswa:**
-   - Buka `siswa/login.html`
+   - Buka `login.html`
    - Login dengan username & password
    - Test upload dokumen
 

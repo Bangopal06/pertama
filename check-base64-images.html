@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Gambar Base64 di Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .results {
+            margin-top: 30px;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-base64 {
+            background: #dc3545;
+            color: white;
+        }
+        .badge-url {
+            background: #28a745;
+            color: white;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Cek Gambar Base64 di Database</h1>
+        <p class="subtitle">Tool untuk mengecek apakah masih ada gambar yang tersimpan sebagai base64 di database</p>
+
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <h3>Total Berita</h3>
+                <div class="number" id="total-berita">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Gambar Base64</h3>
+                <div class="number" id="total-base64">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Program</h3>
+                <div class="number" id="total-program">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Gambar Base64</h3>
+                <div class="number" id="program-base64">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Slider</h3>
+                <div class="number" id="total-slider">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Gambar Base64</h3>
+                <div class="number" id="slider-base64">0</div>
+            </div>
+        </div>
+
+        <div>
+            <button class="btn" onclick="checkDatabase()">🔍 Cek Database</button>
+            <button class="btn btn-success" onclick="window.location.href='migrate-images-to-storage.html'">🚀 Migrasi ke Storage</button>
+        </div>
+
+        <div id="results" class="results"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        async function checkDatabase() {
+            const resultsDiv = document.getElementById('results');
+            const statsDiv = document.getElementById('stats');
+            
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Mengecek database...</p>
+                </div>
+            `;
+
+            try {
+                // Cek tabel berita
+                const { data: berita, error: beritaError } = await window.supabaseClient
+                    .from('berita')
+                    .select('id, judul, gambar');
+
+                if (beritaError) throw beritaError;
+
+                // Cek tabel program
+                const { data: program, error: programError } = await window.supabaseClient
+                    .from('program')
+                    .select('id, judul, gambar');
+
+                if (programError) throw programError;
+
+                // Cek tabel slider
+                const { data: slider, error: sliderError } = await window.supabaseClient
+                    .from('slider')
+                    .select('id, judul, gambar_url');
+
+                if (sliderError) throw sliderError;
+
+                // Analisis data
+                const beritaBase64 = berita.filter(b => b.gambar && b.gambar.startsWith('data:image'));
+                const programBase64 = program.filter(p => p.gambar && p.gambar.startsWith('data:image'));
+                const sliderBase64 = slider.filter(s => s.gambar_url && s.gambar_url.startsWith('data:image'));
+
+                // Update stats
+                document.getElementById('total-berita').textContent = berita.length;
+                document.getElementById('total-base64').textContent = beritaBase64.length;
+                document.getElementById('total-program').textContent = program.length;
+                document.getElementById('program-base64').textContent = programBase64.length;
+                document.getElementById('total-slider').textContent = slider.length;
+                document.getElementById('slider-base64').textContent = sliderBase64.length;
+                statsDiv.style.display = 'grid';
+
+                // Tampilkan hasil
+                const totalBase64 = beritaBase64.length + programBase64.length + sliderBase64.length;
+                
+                let html = '';
+
+                if (totalBase64 === 0) {
+                    html = `
+                        <div class="alert alert-success">
+                            <strong>✅ Sempurna!</strong><br>
+                            Tidak ada gambar base64 di database. Semua gambar sudah menggunakan URL dari Supabase Storage.
+                        </div>
+                    `;
+                } else {
+                    html = `
+                        <div class="alert alert-warning">
+                            <strong>⚠️ Perhatian!</strong><br>
+                            Ditemukan ${totalBase64} gambar yang masih tersimpan sebagai base64 di database.<br>
+                            Klik tombol "Migrasi ke Storage" untuk memindahkan gambar ke Supabase Storage.
+                        </div>
+                    `;
+
+                    // Tabel berita base64
+                    if (beritaBase64.length > 0) {
+                        html += `
+                            <h3 style="margin-top: 30px; color: #333;">📰 Berita dengan Gambar Base64 (${beritaBase64.length})</h3>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Judul</th>
+                                            <th>Ukuran Gambar</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${beritaBase64.map(b => `
+                                            <tr>
+                                                <td>${b.id}</td>
+                                                <td>${b.judul}</td>
+                                                <td>${(b.gambar.length / 1024).toFixed(2)} KB</td>
+                                                <td><span class="badge badge-base64">Base64</span></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+
+                    // Tabel program base64
+                    if (programBase64.length > 0) {
+                        html += `
+                            <h3 style="margin-top: 30px; color: #333;">🎯 Program dengan Gambar Base64 (${programBase64.length})</h3>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Judul</th>
+                                            <th>Ukuran Gambar</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${programBase64.map(p => `
+                                            <tr>
+                                                <td>${p.id}</td>
+                                                <td>${p.judul}</td>
+                                                <td>${(p.gambar.length / 1024).toFixed(2)} KB</td>
+                                                <td><span class="badge badge-base64">Base64</span></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+
+                    // Tabel slider base64
+                    if (sliderBase64.length > 0) {
+                        html += `
+                            <h3 style="margin-top: 30px; color: #333;">🖼️ Slider dengan Gambar Base64 (${sliderBase64.length})</h3>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Judul</th>
+                                            <th>Ukuran Gambar</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${sliderBase64.map(s => `
+                                            <tr>
+                                                <td>${s.id}</td>
+                                                <td>${s.judul}</td>
+                                                <td>${(s.gambar_url.length / 1024).toFixed(2)} KB</td>
+                                                <td><span class="badge badge-base64">Base64</span></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Tampilkan data yang sudah OK
+                const beritaOK = berita.filter(b => !b.gambar || !b.gambar.startsWith('data:image'));
+                const programOK = program.filter(p => !p.gambar || !p.gambar.startsWith('data:image'));
+                const sliderOK = slider.filter(s => !s.gambar_url || !s.gambar_url.startsWith('data:image'));
+
+                if (beritaOK.length > 0 || programOK.length > 0 || sliderOK.length > 0) {
+                    html += `
+                        <div class="alert alert-info" style="margin-top: 30px;">
+                            <strong>ℹ️ Info:</strong><br>
+                            ${beritaOK.length} berita, ${programOK.length} program, dan ${sliderOK.length} slider sudah menggunakan URL Supabase Storage.
+                        </div>
+                    `;
+                }
+
+                resultsDiv.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>❌ Error!</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Auto check saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', checkDatabase);
+    </script>
+</body>
+</html>

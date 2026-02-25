@@ -1,6 +1,6 @@
 // Check admin login
-if (!localStorage.getItem('admin_logged_in')) {
-    window.location.href = 'login.html';
+if (!localStorage.getItem('isLoggedIn')) {
+    window.location.href = '../login.html';
 }
 
 document.getElementById('admin-name').textContent = localStorage.getItem('admin_username') || 'Admin';
@@ -228,13 +228,13 @@ async function updateStatus(siswaId, status) {
         
         if (error) throw error;
         
-        alert('Status berhasil diupdate');
+        showNotification('Status berhasil diupdate!', 'success');
         closeModal();
         loadSiswa();
         
     } catch (error) {
         console.error('Error:', error);
-        alert('Gagal update status');
+        showNotification('Gagal update status', 'error');
     }
 }
 
@@ -253,12 +253,12 @@ async function verifyDokumen(dokumenId, status) {
         
         if (error) throw error;
         
-        alert('Dokumen berhasil diverifikasi');
+        showNotification('Dokumen berhasil diverifikasi!', 'success');
         closeModal();
         
     } catch (error) {
         console.error('Error:', error);
-        alert('Gagal verifikasi dokumen');
+        showNotification('Gagal verifikasi dokumen', 'error');
     }
 }
 
@@ -278,12 +278,12 @@ async function verifyPembayaran(pembayaranId, status) {
         
         if (error) throw error;
         
-        alert('Pembayaran berhasil diverifikasi');
+        showNotification('Pembayaran berhasil diverifikasi!', 'success');
         closeModal();
         
     } catch (error) {
         console.error('Error:', error);
-        alert('Gagal verifikasi pembayaran');
+        showNotification('Gagal verifikasi pembayaran', 'error');
     }
 }
 
@@ -292,9 +292,11 @@ function closeModal() {
 }
 
 function logout() {
-    localStorage.removeItem('admin_logged_in');
-    localStorage.removeItem('admin_username');
-    window.location.href = 'login.html';
+    if (confirm('Apakah Anda yakin ingin keluar dari halaman admin?')) {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('adminUser');
+        window.location.href = '../login.html';
+    }
 }
 
 // Load data on page load

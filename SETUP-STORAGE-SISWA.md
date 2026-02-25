@@ -62,7 +62,7 @@ Jalankan file `setup-siswa-system.sql` di SQL Editor
    - No. Pendaftaran
    - Username (NISN)
    - Password (random 8 karakter)
-3. Login di `/siswa/login.html`
+3. Login di `/login.html`
 4. Upload dokumen dan bukti pembayaran
 
 ### Untuk Admin:
@@ -92,5 +92,5 @@ Jalankan file `setup-siswa-system.sql` di SQL Editor
 
 1. Daftar siswa baru di ppdb.html
 2. Catat username dan password yang muncul
-3. Login di siswa/login.html
+3. Login di login.html
 4. Test upload dokumen dan pembayaran

@@ -108,6 +108,6 @@ USING (bucket_id = 'bukti-pembayaran');
 -- 
 -- Langkah selanjutnya:
 -- 1. Test pendaftaran siswa di ppdb.html
--- 2. Login di /siswa/login.html
+-- 2. Login di /login.html
 -- 3. Upload dokumen dan pembayaran
 -- ============================================

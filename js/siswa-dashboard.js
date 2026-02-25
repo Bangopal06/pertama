@@ -3,7 +3,7 @@ const siswaId = localStorage.getItem('siswa_id');
 const siswaNama = localStorage.getItem('siswa_nama');
 
 if (!siswaId) {
-    window.location.href = 'login.html';
+    window.location.href = '../login.html';
 }
 
 document.getElementById('user-name').textContent = siswaNama;
@@ -278,10 +278,12 @@ document.getElementById('btn-upload-bukti').addEventListener('click', async func
 });
 
 function logout() {
-    localStorage.removeItem('siswa_id');
-    localStorage.removeItem('siswa_nama');
-    localStorage.removeItem('siswa_username');
-    window.location.href = 'login.html';
+    if (confirm('Apakah Anda yakin ingin keluar dari portal siswa?')) {
+        localStorage.removeItem('siswa_id');
+        localStorage.removeItem('siswa_nama');
+        localStorage.removeItem('siswa_username');
+        window.location.href = '../login.html';
+    }
 }
 
 // Load initial data

@@ -1,12 +1,15 @@
 if (!localStorage.getItem('isLoggedIn')) {
-    window.location.href = 'login.html';
+    window.location.href = '../login.html';
 }
 
 document.getElementById('logout').addEventListener('click', function(e) {
     e.preventDefault();
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('adminUser');
-    window.location.href = 'login.html';
+    
+    if (confirm('Apakah Anda yakin ingin keluar dari halaman admin?')) {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('adminUser');
+        window.location.href = '../login.html';
+    }
 });
 
 let editingId = null;
@@ -126,16 +129,18 @@ document.getElementById('berita-form').addEventListener('submit', async function
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 
-                // Coba upload ke Supabase Storage
+                // Upload ke Supabase Storage (WAJIB, tidak ada fallback)
                 const uploadedUrl = await uploadImage(file);
                 
-                // Jika upload gagal (bucket belum ada), convert ke base64
+                // Jika upload gagal, stop dan tampilkan error
                 if (!uploadedUrl) {
-                    console.log('Upload ke storage gagal, menggunakan base64...');
-                    gambarUrl = await convertToBase64(file);
-                } else {
-                    gambarUrl = uploadedUrl;
+                    showNotification('Upload gambar gagal! Pastikan bucket sudah dibuat dengan menjalankan setup-storage-images.sql', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Simpan';
+                    return; // Stop proses
                 }
+                
+                gambarUrl = uploadedUrl;
             }
         }
         
@@ -165,7 +170,7 @@ document.getElementById('berita-form').addEventListener('submit', async function
             
             if (error) throw error;
             
-            alert('Berita berhasil diupdate!');
+            showNotification('Berita berhasil diupdate!', 'success');
         } else {
             const { data, error } = await window.supabaseClient
                 .from('berita')
@@ -176,7 +181,7 @@ document.getElementById('berita-form').addEventListener('submit', async function
             
             if (error) throw error;
             
-            alert('Berita berhasil ditambahkan!');
+            showNotification('Berita berhasil ditambahkan!', 'success');
         }
         
         document.getElementById('form-berita').style.display = 'none';
@@ -188,7 +193,7 @@ document.getElementById('berita-form').addEventListener('submit', async function
         loadBerita();
     } catch (error) {
         console.error('Error detail:', error);
-        alert('Terjadi kesalahan: ' + (error.message || 'Unknown error'));
+        showNotification('Terjadi kesalahan: ' + (error.message || 'Unknown error'), 'error');
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Simpan';
@@ -196,15 +201,6 @@ document.getElementById('berita-form').addEventListener('submit', async function
 });
 
 // Fungsi untuk convert gambar ke base64 (fallback jika storage belum setup)
-async function convertToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
 async function uploadImage(file) {
     const progressDiv = document.getElementById('upload-progress');
     const progressBar = document.getElementById('progress-bar');
@@ -212,7 +208,7 @@ async function uploadImage(file) {
     
     try {
         progressDiv.style.display = 'block';
-        progressText.textContent = 'Uploading...';
+        progressText.textContent = 'Mengupload gambar...';
         progressBar.style.width = '30%';
         
         // Generate unique filename
@@ -220,6 +216,7 @@ async function uploadImage(file) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `${fileName}`;
         
+        console.log('Uploading file:', fileName);
         progressBar.style.width = '60%';
         
         // Upload ke Supabase Storage
@@ -231,17 +228,30 @@ async function uploadImage(file) {
             });
         
         if (error) {
-            console.error('Storage error:', error);
+            console.error('Storage upload error:', error);
             progressDiv.style.display = 'none';
+            
+            // Tampilkan error yang jelas
+            if (error.message.includes('Bucket not found')) {
+                showNotification('Bucket berita-images belum dibuat! Jalankan setup-storage-images.sql di Supabase SQL Editor.', 'error');
+            } else if (error.message.includes('new row violates row-level security')) {
+                showNotification('Error: Tidak ada permission untuk upload. Cek RLS policy di Supabase.', 'error');
+            } else {
+                showNotification('Error upload: ' + error.message, 'error');
+            }
+            
             return null; // Return null jika gagal, akan fallback ke base64
         }
         
+        console.log('Upload success:', data);
         progressBar.style.width = '90%';
         
         // Get public URL
         const { data: urlData } = window.supabaseClient.storage
             .from('berita-images')
             .getPublicUrl(filePath);
+        
+        console.log('Public URL:', urlData.publicUrl);
         
         progressBar.style.width = '100%';
         progressText.textContent = 'Upload berhasil!';
@@ -251,10 +261,12 @@ async function uploadImage(file) {
             progressBar.style.width = '0%';
         }, 1000);
         
+        showNotification('Gambar berhasil diupload ke Supabase Storage!', 'success');
         return urlData.publicUrl;
     } catch (error) {
         console.error('Error uploading image:', error);
         progressDiv.style.display = 'none';
+        showNotification('Error upload gambar: ' + error.message, 'error');
         return null; // Return null untuk fallback ke base64
     }
 }
@@ -349,10 +361,11 @@ async function deleteBerita(id) {
             
             if (error) throw error;
             
+            showNotification('Berita berhasil dihapus!', 'success');
             loadBerita();
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus berita.');
+            showNotification('Terjadi kesalahan saat menghapus berita.', 'error');
         }
     }
 }

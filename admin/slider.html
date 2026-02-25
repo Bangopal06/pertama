@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Slider - Admin Panel</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        .slider-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .slider-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .slider-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .slider-card-content {
+            padding: 15px;
+        }
+        .slider-card h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        .slider-card p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .slider-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="logo">Admin Panel</div>
+            <nav class="admin-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="berita.html">Kelola Berita</a>
+                <a href="program.html">Kelola Program</a>
+                <a href="slider.html" class="active">Kelola Slider</a>
+                <a href="ppdb.html">Data PPDB</a>
+                <a href="siswa.html">Data Siswa</a>
+                <a href="#" id="logout">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Kelola Slider Homepage</h1>
+                <button class="btn-primary" id="btn-tambah">+ Tambah Slide</button>
+            </div>
+
+            <div class="slider-preview" id="slider-preview"></div>
+
+            <div id="form-slider" style="display: none;">
+                <h2 id="form-title">Tambah Slide Baru</h2>
+                <form id="slider-form">
+                    <div class="form-group">
+                        <label>Judul Utama *</label>
+                        <input type="text" id="judul" required placeholder="Contoh: Selamat Datang di">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sub Judul *</label>
+                        <input type="text" id="subjudul" required placeholder="Contoh: SMA NEGERI 1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Deskripsi</label>
+                        <input type="text" id="deskripsi" placeholder="Contoh: Centre of Comprehensive Education">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pilih Cara Upload Gambar</label>
+                        <div>
+                            <label><input type="radio" name="image-type" value="file" checked> Upload File</label>
+                            <label><input type="radio" name="image-type" value="url"> Input URL</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="file-upload-section">
+                        <label>Upload Gambar Slider (Max 10MB) *</label>
+                        <input type="file" id="gambar_file" accept="image/*">
+                        <small>Rekomendasi: 1920x1080px atau 1600x900px</small>
+                    </div>
+
+                    <div class="form-group" id="url-input-section" style="display: none;">
+                        <label>URL Gambar *</label>
+                        <input type="url" id="gambar_url" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <img id="preview-img" style="max-width: 100%; max-height: 300px; display: none; margin-top: 10px; border-radius: 5px;">
+                    </div>
+
+                    <div id="upload-progress" style="display: none; margin: 15px 0;">
+                        <div style="background: #e9ecef; border-radius: 5px; overflow: hidden;">
+                            <div id="progress-bar" style="background: #28a745; height: 30px; width: 0%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>
+                        </div>
+                        <p id="progress-text" style="margin-top: 5px; font-size: 14px;"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Link URL (Opsional)</label>
+                        <input type="text" id="link_url" placeholder="profil.html atau https://example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teks Tombol (Opsional)</label>
+                        <input type="text" id="link_text" placeholder="Pelajari Lebih Lanjut">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Urutan *</label>
+                        <input type="number" id="urutan" required value="1" min="1">
+                        <small>Slide dengan urutan lebih kecil akan tampil lebih dulu</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="aktif" checked> Aktif (tampilkan di homepage)
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Simpan</button>
+                        <button type="button" class="btn-secondary" id="btn-batal">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/db-config.js"></script>
+    <script src="../js/notification.js"></script>
+    <script src="../js/admin-slider.js"></script>
+</body>
+</html>

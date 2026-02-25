@@ -112,10 +112,41 @@
             margin-bottom: 20px;
             font-size: 48px;
         }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(-5px);
+        }
+        .back-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
+        <div class="back-container">
+            <a href="index.html" class="btn-back">
+                <span>←</span>
+                <span>Kembali ke Beranda</span>
+            </a>
+        </div>
+        
         <div class="login-box">
             <div class="logo">🎓</div>
             <h1>Login</h1>

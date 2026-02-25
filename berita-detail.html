@@ -25,12 +25,6 @@
             margin-bottom: 20px;
         }
         
-        .article-meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
         .article-title {
             font-size: 42px;
             color: #1e3a8a;
@@ -66,18 +60,6 @@
         
         .article-content p {
             margin-bottom: 20px;
-        }
-        
-        .article-content h2 {
-            font-size: 32px;
-            color: #1e3a8a;
-            margin: 40px 0 20px;
-        }
-        
-        .article-content h3 {
-            font-size: 24px;
-            color: #1e3a8a;
-            margin: 30px 0 15px;
         }
         
         .back-button {
@@ -130,24 +112,6 @@
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
-        .related-news {
-            margin-top: 60px;
-            padding-top: 40px;
-            border-top: 2px solid #e2e8f0;
-        }
-        
-        .related-news h3 {
-            font-size: 28px;
-            color: #1e3a8a;
-            margin-bottom: 30px;
-        }
-        
-        .related-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
     </style>
 </head>
 <body>
@@ -196,22 +160,59 @@
                 </div>
             </div>
         </article>
-        
-        <div class="related-news">
-            <h3>Berita Terkait</h3>
-            <div class="related-grid" id="related-news"></div>
-        </div>
     </div>
 
-    <footer class="footer"></footer>
-
-    <a href="https://wa.me/6281234567890" class="whatsapp-float" target="_blank">
-        <span class="whatsapp-icon">💬</span>
-    </a>
+    <footer class="footer">
+        <div class="footer-main">
+            <div class="container">
+                <div class="footer-logo">
+                    <h3>SMA NEGERI 1</h3>
+                    <p>International Islamic Boarding School</p>
+                </div>
+                
+                <div class="footer-content">
+                    <div class="footer-col">
+                        <h3>Ar-Rohmah</h3>
+                        <ul>
+                            <li><a href="#">Kampus 1</a></li>
+                            <li><a href="#">Kampus 2</a></li>
+                            <li><a href="#">Kampus 3</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h3>Pendaftaran</h3>
+                        <ul>
+                            <li><a href="ppdb.html">Panduan Pendaftaran</a></li>
+                            <li><a href="#">Pengumuman</a></li>
+                            <li><a href="#">F.A.Q</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h3>Sekolah kami</h3>
+                        <ul>
+                            <li><a href="#">Ma'had Ar Rohmah Bogor</a></li>
+                            <li><a href="#">SMK Tulungagung</a></li>
+                            <li><a href="#">Al Fattah Batu</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h3>Hubungi Kami</h3>
+                        <p><strong>Whatsapp:</strong><br>0812 331 60000</p>
+                        <p><strong>Operasional:</strong><br>08.00 WIB - 17.00 WIB</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025, Ar-Rohmah International Islamic Boarding School</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
-    <script src="js/footer.js"></script>
     <script src="js/berita-detail.js"></script>
 </body>
 </html>

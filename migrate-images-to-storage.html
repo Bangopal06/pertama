@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrasi Gambar ke Supabase Storage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #0dcaf0;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        button {
+            background: #1e3a8a;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #3b82f6;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        #progress {
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #28a745;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        #log {
+            background: #2d3748;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 20px;
+            display: none;
+        }
+        .log-item {
+            margin-bottom: 5px;
+        }
+        .log-success { color: #4ade80; }
+        .log-error { color: #f87171; }
+        .log-info { color: #60a5fa; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Migrasi Gambar ke Supabase Storage</h1>
+        <p class="subtitle">Tool untuk memindahkan gambar dari database (base64) ke Supabase Storage</p>
+        
+        <div class="warning">
+            <strong>⚠️ Peringatan:</strong><br>
+            - Proses ini akan mengubah URL gambar di database<br>
+            - Pastikan bucket sudah dibuat (jalankan setup-storage-images.sql)<br>
+            - Backup database sebelum menjalankan migrasi<br>
+            - Proses tidak bisa di-undo
+        </div>
+        
+        <div class="info">
+            <strong>ℹ️ Cara Kerja:</strong><br>
+            1. Scan semua berita dan program yang punya gambar base64<br>
+            2. Convert base64 ke file<br>
+            3. Upload file ke Supabase Storage<br>
+            4. Update URL di database<br>
+            5. Gambar base64 otomatis terhapus dari database
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-number" id="stat-berita">0</div>
+                <div class="stat-label">Berita Base64</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-program">0</div>
+                <div class="stat-label">Program Base64</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-migrated">0</div>
+                <div class="stat-label">Berhasil Migrasi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-failed">0</div>
+                <div class="stat-label">Gagal</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="scanImages()" id="btn-scan">🔍 Scan Gambar Base64</button>
+            <button onclick="migrateImages()" id="btn-migrate" disabled>🚀 Mulai Migrasi</button>
+            <button onclick="location.reload()" class="btn-danger">🔄 Reset</button>
+        </div>
+        
+        <div id="progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
+            </div>
+            <div id="progress-text">Memproses...</div>
+        </div>
+        
+        <div id="log"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        let beritaBase64 = [];
+        let programBase64 = [];
+        let migratedCount = 0;
+        let failedCount = 0;
+
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('log');
+            log.style.display = 'block';
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(logItem);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function scanImages() {
+            const btnScan = document.getElementById('btn-scan');
+            btnScan.disabled = true;
+            btnScan.textContent = '⏳ Scanning...';
+            
+            addLog('Memulai scan gambar base64...', 'info');
+            
+            try {
+                // Scan berita
+                addLog('Scanning table berita...', 'info');
+                const { data: berita, error: beritaError } = await window.supabaseClient
+                    .from('berita')
+                    .select('id, judul, gambar_url');
+                
+                if (beritaError) throw beritaError;
+                
+                beritaBase64 = berita.filter(b => b.gambar_url && b.gambar_url.startsWith('data:image'));
+                addLog(`Ditemukan ${beritaBase64.length} berita dengan gambar base64`, 'success');
+                
+                // Scan program
+                addLog('Scanning table program...', 'info');
+                const { data: program, error: programError } = await window.supabaseClient
+                    .from('program')
+                    .select('id, judul, gambar_url');
+                
+                if (programError) throw programError;
+                
+                programBase64 = program.filter(p => p.gambar_url && p.gambar_url.startsWith('data:image'));
+                addLog(`Ditemukan ${programBase64.length} program dengan gambar base64`, 'success');
+                
+                // Update stats
+                document.getElementById('stats').style.display = 'grid';
+                document.getElementById('stat-berita').textContent = beritaBase64.length;
+                document.getElementById('stat-program').textContent = programBase64.length;
+                
+                const total = beritaBase64.length + programBase64.length;
+                if (total > 0) {
+                    addLog(`Total ${total} gambar perlu dimigrasi`, 'info');
+                    document.getElementById('btn-migrate').disabled = false;
+                } else {
+                    addLog('Tidak ada gambar base64 yang perlu dimigrasi!', 'success');
+                }
+                
+            } catch (error) {
+                addLog('Error saat scan: ' + error.message, 'error');
+            } finally {
+                btnScan.disabled = false;
+                btnScan.textContent = '🔍 Scan Gambar Base64';
+            }
+        }
+
+        function base64ToBlob(base64) {
+            const parts = base64.split(';base64,');
+            const contentType = parts[0].split(':')[1];
+            const raw = window.atob(parts[1]);
+            const rawLength = raw.length;
+            const uInt8Array = new Uint8Array(rawLength);
+            
+            for (let i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+            
+            return new Blob([uInt8Array], { type: contentType });
+        }
+
+        async function uploadToStorage(blob, bucket, prefix) {
+            const ext = blob.type.split('/')[1];
+            const fileName = `${prefix}-${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+            
+            const { data, error } = await window.supabaseClient.storage
+                .from(bucket)
+                .upload(fileName, blob, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+            
+            if (error) throw error;
+            
+            const { data: urlData } = window.supabaseClient.storage
+                .from(bucket)
+                .getPublicUrl(fileName);
+            
+            return urlData.publicUrl;
+        }
+
+        async function migrateImages() {
+            const btnMigrate = document.getElementById('btn-migrate');
+            btnMigrate.disabled = true;
+            btnMigrate.textContent = '⏳ Migrasi...';
+            
+            document.getElementById('progress').style.display = 'block';
+            
+            const total = beritaBase64.length + programBase64.length;
+            let processed = 0;
+            
+            addLog('='.repeat(50), 'info');
+            addLog('MEMULAI MIGRASI', 'info');
+            addLog('='.repeat(50), 'info');
+            
+            // Migrasi berita
+            for (const berita of beritaBase64) {
+                try {
+                    addLog(`Migrasi berita: ${berita.judul}`, 'info');
+                    
+                    // Convert base64 to blob
+                    const blob = base64ToBlob(berita.gambar_url);
+                    
+                    // Upload to storage
+                    const newUrl = await uploadToStorage(blob, 'berita-images', 'berita');
+                    
+                    // Update database
+                    const { error } = await window.supabaseClient
+                        .from('berita')
+                        .update({ gambar_url: newUrl })
+                        .eq('id', berita.id);
+                    
+                    if (error) throw error;
+                    
+                    migratedCount++;
+                    addLog(`✓ Berhasil: ${berita.judul}`, 'success');
+                    
+                } catch (error) {
+                    failedCount++;
+                    addLog(`✗ Gagal: ${berita.judul} - ${error.message}`, 'error');
+                }
+                
+                processed++;
+                updateProgress(processed, total);
+            }
+            
+            // Migrasi program
+            for (const program of programBase64) {
+                try {
+                    addLog(`Migrasi program: ${program.judul}`, 'info');
+                    
+                    const blob = base64ToBlob(program.gambar_url);
+                    const newUrl = await uploadToStorage(blob, 'program-images', 'program');
+                    
+                    const { error } = await window.supabaseClient
+                        .from('program')
+                        .update({ gambar_url: newUrl })
+                        .eq('id', program.id);
+                    
+                    if (error) throw error;
+                    
+                    migratedCount++;
+                    addLog(`✓ Berhasil: ${program.judul}`, 'success');
+                    
+                } catch (error) {
+                    failedCount++;
+                    addLog(`✗ Gagal: ${program.judul} - ${error.message}`, 'error');
+                }
+                
+                processed++;
+                updateProgress(processed, total);
+            }
+            
+            // Update stats
+            document.getElementById('stat-migrated').textContent = migratedCount;
+            document.getElementById('stat-failed').textContent = failedCount;
+            
+            addLog('='.repeat(50), 'info');
+            addLog('MIGRASI SELESAI!', 'success');
+            addLog(`Berhasil: ${migratedCount}, Gagal: ${failedCount}`, 'info');
+            addLog('='.repeat(50), 'info');
+            
+            if (failedCount === 0) {
+                alert('✅ Migrasi berhasil!\n\nSemua gambar sudah dipindahkan ke Supabase Storage.\nDatabase sekarang lebih ringan dan website lebih cepat!');
+            } else {
+                alert(`⚠️ Migrasi selesai dengan ${failedCount} error.\n\nCek log untuk detail error.`);
+            }
+        }
+
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-fill').textContent = percent + '%';
+            document.getElementById('progress-text').textContent = `Memproses ${current} dari ${total} gambar...`;
+        }
+    </script>
+</body>
+</html>

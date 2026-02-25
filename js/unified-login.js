@@ -9,19 +9,21 @@ document.getElementById('login-form').addEventListener('submit', async function(
     submitBtn.textContent = 'Memproses...';
     
     try {
-        // Cek apakah login sebagai admin
+        // Cek apakah login sebagai admin dari database
         const { data: adminData, error: adminError } = await window.supabaseClient
             .from('admin_users')
             .select('*')
             .eq('username', username)
             .eq('password', password)
+            .eq('aktif', true)
             .single();
         
         if (adminData && !adminError) {
             // Login sebagai admin berhasil
-            localStorage.setItem('admin_logged_in', 'true');
-            localStorage.setItem('admin_username', adminData.username);
-            localStorage.setItem('admin_name', adminData.nama_lengkap || 'Admin');
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('adminUser', adminData.username);
+            localStorage.setItem('adminName', adminData.nama_lengkap);
+            localStorage.setItem('adminRole', adminData.role);
             
             // Redirect ke admin dashboard
             window.location.href = 'admin/dashboard.html';
@@ -48,11 +50,11 @@ document.getElementById('login-form').addEventListener('submit', async function(
         }
         
         // Jika tidak ada yang cocok
-        alert('Username atau password salah!\n\nPastikan Anda memasukkan:\n- Admin: username admin\n- Siswa: NISN atau No. Pendaftaran');
+        alert('Username atau password salah!\n\nPastikan Anda memasukkan:\n- Admin: username dan password yang terdaftar\n- Siswa: NISN atau No. Pendaftaran dengan password yang diberikan\n\nJika Anda admin dan belum setup database, jalankan file setup-admin-table.sql di Supabase SQL Editor.');
         
     } catch (error) {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat login. Silakan coba lagi.');
+        alert('Terjadi kesalahan saat login.\n\nKemungkinan:\n1. Table admin_users belum dibuat (jalankan setup-admin-table.sql)\n2. Koneksi database bermasalah\n3. ' + error.message);
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Masuk';

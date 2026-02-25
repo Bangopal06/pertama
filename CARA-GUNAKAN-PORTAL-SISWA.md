@@ -71,7 +71,7 @@ USING (bucket_id = 'bukti-pembayaran');
 
 ### Langkah 2: Login ke Portal Siswa
 
-1. Buka `/siswa/login.html`
+1. Buka `/login.html`
 2. Masukkan username (NISN) dan password
 3. Klik "Masuk"
 

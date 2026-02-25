@@ -1,12 +1,15 @@
 if (!localStorage.getItem('isLoggedIn')) {
-    window.location.href = 'login.html';
+    window.location.href = '../login.html';
 }
 
 document.getElementById('logout').addEventListener('click', function(e) {
     e.preventDefault();
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('adminUser');
-    window.location.href = 'login.html';
+    
+    if (confirm('Apakah Anda yakin ingin keluar dari halaman admin?')) {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('adminUser');
+        window.location.href = '../login.html';
+    }
 });
 
 async function updateStats() {

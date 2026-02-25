@@ -145,7 +145,7 @@ USING (bucket_id = 'bukti-pembayaran');
 
 ### C. Test Login Siswa
 
-1. Buka `siswa/login.html` di browser
+1. Buka `login.html` di browser
 2. Masukkan username dan password yang tadi
 3. Klik "Masuk"
 4. Jika berhasil, akan redirect ke dashboard siswa
@@ -184,7 +184,7 @@ Pastikan semua ini sudah ✅:
 ### Testing
 - [ ] Bisa daftar siswa baru di ppdb.html
 - [ ] Dapat username & password setelah daftar
-- [ ] Bisa login di siswa/login.html
+- [ ] Bisa login di login.html
 - [ ] Bisa upload dokumen
 - [ ] File muncul di Supabase Storage
 - [ ] Bisa upload bukti pembayaran

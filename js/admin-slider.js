@@ -16,9 +16,9 @@ let editingId = null;
 let currentImageUrl = null;
 
 document.getElementById('btn-tambah').addEventListener('click', function() {
-    document.getElementById('form-program').style.display = 'block';
-    document.getElementById('form-title').textContent = 'Tambah Program Baru';
-    document.getElementById('program-form').reset();
+    document.getElementById('form-slider').style.display = 'block';
+    document.getElementById('form-title').textContent = 'Tambah Slide Baru';
+    document.getElementById('slider-form').reset();
     document.getElementById('preview-img').style.display = 'none';
     document.getElementById('upload-progress').style.display = 'none';
     document.getElementById('file-upload-section').style.display = 'block';
@@ -26,11 +26,12 @@ document.getElementById('btn-tambah').addEventListener('click', function() {
     document.getElementById('aktif').checked = true;
     currentImageUrl = null;
     editingId = null;
+    window.scrollTo(0, document.getElementById('form-slider').offsetTop);
 });
 
 document.getElementById('btn-batal').addEventListener('click', function() {
-    document.getElementById('form-program').style.display = 'none';
-    document.getElementById('program-form').reset();
+    document.getElementById('form-slider').style.display = 'none';
+    document.getElementById('slider-form').reset();
     document.getElementById('preview-img').style.display = 'none';
     document.getElementById('upload-progress').style.display = 'none';
     currentImageUrl = null;
@@ -67,7 +68,7 @@ document.getElementById('gambar_url').addEventListener('input', function(e) {
         preview.style.display = 'block';
         preview.onerror = function() {
             preview.style.display = 'none';
-            alert('URL gambar tidak valid atau tidak bisa diakses');
+            showNotification('URL gambar tidak valid atau tidak bisa diakses', 'error');
         };
         currentImageUrl = url;
     } else {
@@ -82,18 +83,21 @@ document.getElementById('gambar_file').addEventListener('change', function(e) {
     const preview = document.getElementById('preview-img');
     
     if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-            alert('Ukuran file terlalu besar! Maksimal 5MB');
+        // Validasi ukuran file (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            showNotification('Ukuran file terlalu besar! Maksimal 10MB', 'error');
             e.target.value = '';
             return;
         }
         
+        // Validasi tipe file
         if (!file.type.startsWith('image/')) {
-            alert('File harus berupa gambar!');
+            showNotification('File harus berupa gambar!', 'error');
             e.target.value = '';
             return;
         }
         
+        // Preview gambar
         const reader = new FileReader();
         reader.onload = function(event) {
             preview.src = event.target.result;
@@ -105,7 +109,7 @@ document.getElementById('gambar_file').addEventListener('change', function(e) {
     }
 });
 
-document.getElementById('program-form').addEventListener('submit', async function(e) {
+document.getElementById('slider-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -115,77 +119,80 @@ document.getElementById('program-form').addEventListener('submit', async functio
     try {
         let gambarUrl = currentImageUrl;
         
+        // Cek apakah menggunakan URL atau file upload
         const imageType = document.querySelector('input[name="image-type"]:checked').value;
         
         if (imageType === 'url') {
+            // Gunakan URL yang diinput
             gambarUrl = document.getElementById('gambar_url').value || currentImageUrl;
         } else {
+            // Upload gambar jika ada file baru
             const fileInput = document.getElementById('gambar_file');
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 
-                // Upload ke Supabase Storage (WAJIB, tidak ada fallback)
+                // Upload ke Supabase Storage (WAJIB)
                 const uploadedUrl = await uploadImage(file);
                 
-                // Jika upload gagal, stop dan tampilkan error
+                // Jika upload gagal, stop
                 if (!uploadedUrl) {
                     showNotification('Upload gambar gagal! Pastikan bucket sudah dibuat dengan menjalankan setup-storage-images.sql', 'error');
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Simpan';
-                    return; // Stop proses
+                    return;
                 }
                 
                 gambarUrl = uploadedUrl;
             }
         }
         
+        // Validasi gambar wajib ada
         if (!gambarUrl) {
-            gambarUrl = 'https://via.placeholder.com/600x400?text=Program';
+            showNotification('Gambar wajib diisi!', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Simpan';
+            return;
         }
         
-        // Parse kegiatan dari textarea (satu per baris)
-        const kegiatanText = document.getElementById('kegiatan').value;
-        const kegiatanArray = kegiatanText.split('\n').filter(k => k.trim() !== '');
-        
-        const programData = {
+        const sliderData = {
             judul: document.getElementById('judul').value,
+            subjudul: document.getElementById('subjudul').value,
             deskripsi: document.getElementById('deskripsi').value,
-            deskripsi_lengkap: document.getElementById('deskripsi_lengkap').value,
             gambar_url: gambarUrl,
-            kegiatan: kegiatanArray,
-            urutan: parseInt(document.getElementById('urutan').value) || 0,
-            aktif: document.getElementById('aktif').checked,
-            updated_at: new Date().toISOString()
+            link_url: document.getElementById('link_url').value || null,
+            link_text: document.getElementById('link_text').value || null,
+            urutan: parseInt(document.getElementById('urutan').value),
+            aktif: document.getElementById('aktif').checked
         };
-        
-        console.log('Mengirim data:', programData);
         
         if (editingId) {
             const { data, error } = await window.supabaseClient
-                .from('program')
-                .update(programData)
+                .from('slider')
+                .update(sliderData)
                 .eq('id', editingId)
                 .select();
             
             if (error) throw error;
-            showNotification('Program berhasil diupdate!', 'success');
+            
+            showNotification('Slide berhasil diupdate!', 'success');
         } else {
             const { data, error } = await window.supabaseClient
-                .from('program')
-                .insert([programData])
+                .from('slider')
+                .insert([sliderData])
                 .select();
             
             if (error) throw error;
-            showNotification('Program berhasil ditambahkan!', 'success');
+            
+            showNotification('Slide berhasil ditambahkan!', 'success');
         }
         
-        document.getElementById('form-program').style.display = 'none';
-        document.getElementById('program-form').reset();
+        document.getElementById('form-slider').style.display = 'none';
+        document.getElementById('slider-form').reset();
         document.getElementById('preview-img').style.display = 'none';
         document.getElementById('upload-progress').style.display = 'none';
         currentImageUrl = null;
         editingId = null;
-        loadProgram();
+        loadSlider();
     } catch (error) {
         console.error('Error detail:', error);
         showNotification('Terjadi kesalahan: ' + (error.message || 'Unknown error'), 'error');
@@ -202,18 +209,18 @@ async function uploadImage(file) {
     
     try {
         progressDiv.style.display = 'block';
-        progressText.textContent = 'Mengupload gambar program...';
+        progressText.textContent = 'Mengupload gambar slider...';
         progressBar.style.width = '30%';
         
         const fileExt = file.name.split('.').pop();
-        const fileName = `program-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const fileName = `slider-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `${fileName}`;
         
-        console.log('Uploading program image:', fileName);
+        console.log('Uploading slider image:', fileName);
         progressBar.style.width = '60%';
         
         const { data, error } = await window.supabaseClient.storage
-            .from('program-images')
+            .from('slider-images')
             .upload(filePath, file, {
                 cacheControl: '3600',
                 upsert: false
@@ -223,9 +230,8 @@ async function uploadImage(file) {
             console.error('Storage upload error:', error);
             progressDiv.style.display = 'none';
             
-            // Tampilkan error yang jelas
             if (error.message.includes('Bucket not found')) {
-                showNotification('Bucket program-images belum dibuat! Jalankan setup-storage-images.sql di Supabase SQL Editor.', 'error');
+                showNotification('Bucket slider-images belum dibuat! Jalankan setup-storage-images.sql di Supabase SQL Editor.', 'error');
             } else if (error.message.includes('new row violates row-level security')) {
                 showNotification('Error: Tidak ada permission untuk upload. Cek RLS policy di Supabase.', 'error');
             } else {
@@ -239,7 +245,7 @@ async function uploadImage(file) {
         progressBar.style.width = '90%';
         
         const { data: urlData } = window.supabaseClient.storage
-            .from('program-images')
+            .from('slider-images')
             .getPublicUrl(filePath);
         
         console.log('Public URL:', urlData.publicUrl);
@@ -252,7 +258,7 @@ async function uploadImage(file) {
             progressBar.style.width = '0%';
         }, 1000);
         
-        showNotification('Gambar program berhasil diupload ke Supabase Storage!', 'success');
+        showNotification('Gambar slider berhasil diupload ke Supabase Storage!', 'success');
         return urlData.publicUrl;
     } catch (error) {
         console.error('Error uploading image:', error);
@@ -262,44 +268,49 @@ async function uploadImage(file) {
     }
 }
 
-async function loadProgram() {
+async function loadSlider() {
+    const container = document.getElementById('slider-preview');
+    
     try {
-        const { data: program, error } = await window.supabaseClient
-            .from('program')
+        const { data: slider, error } = await window.supabaseClient
+            .from('slider')
             .select('*')
             .order('urutan', { ascending: true });
         
         if (error) throw error;
         
-        const tbody = document.getElementById('program-list');
-        
-        if (!program || program.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">Belum ada program</td></tr>';
+        if (!slider || slider.length === 0) {
+            container.innerHTML = '<p>Belum ada slide. Klik "Tambah Slide" untuk membuat slide baru.</p>';
             return;
         }
         
-        tbody.innerHTML = program.map(p => `
-            <tr>
-                <td>${p.urutan}</td>
-                <td><img src="${p.gambar_url || 'https://via.placeholder.com/100x60?text=No+Image'}" alt="${p.judul}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 5px;"></td>
-                <td>${p.judul}</td>
-                <td><span class="status-badge ${p.aktif ? 'status-active' : 'status-inactive'}">${p.aktif ? 'Aktif' : 'Nonaktif'}</span></td>
-                <td>
-                    <button class="btn-edit" onclick="editProgram(${p.id})">Edit</button>
-                    <button class="btn-delete" onclick="deleteProgram(${p.id})">Hapus</button>
-                </td>
-            </tr>
+        container.innerHTML = slider.map(s => `
+            <div class="slider-card">
+                <img src="${s.gambar_url}" alt="${s.judul}">
+                <div class="slider-card-content">
+                    <h3>${s.judul} ${s.subjudul}</h3>
+                    <p>${s.deskripsi || ''}</p>
+                    <p><strong>Urutan:</strong> ${s.urutan}</p>
+                    <span class="badge ${s.aktif ? 'badge-active' : 'badge-inactive'}">
+                        ${s.aktif ? 'Aktif' : 'Nonaktif'}
+                    </span>
+                    <div class="slider-card-actions">
+                        <button class="btn-edit" onclick="editSlider(${s.id})">Edit</button>
+                        <button class="btn-delete" onclick="deleteSlider(${s.id})">Hapus</button>
+                    </div>
+                </div>
+            </div>
         `).join('');
     } catch (error) {
-        console.error('Error loading program:', error);
-        alert('Error loading program: ' + error.message);
+        console.error('Error loading slider:', error);
+        container.innerHTML = '<p style="color: red;">Error loading slider.</p>';
     }
 }
 
-async function editProgram(id) {
+async function editSlider(id) {
     try {
         const { data: item, error } = await window.supabaseClient
-            .from('program')
+            .from('slider')
             .select('*')
             .eq('id', id)
             .single();
@@ -307,19 +318,17 @@ async function editProgram(id) {
         if (error) throw error;
         
         if (item) {
-            document.getElementById('form-program').style.display = 'block';
-            document.getElementById('form-title').textContent = 'Edit Program';
+            document.getElementById('form-slider').style.display = 'block';
+            document.getElementById('form-title').textContent = 'Edit Slide';
             document.getElementById('judul').value = item.judul;
-            document.getElementById('deskripsi').value = item.deskripsi;
-            document.getElementById('deskripsi_lengkap').value = item.deskripsi_lengkap || '';
-            document.getElementById('urutan').value = item.urutan || 0;
+            document.getElementById('subjudul').value = item.subjudul;
+            document.getElementById('deskripsi').value = item.deskripsi || '';
+            document.getElementById('link_url').value = item.link_url || '';
+            document.getElementById('link_text').value = item.link_text || '';
+            document.getElementById('urutan').value = item.urutan;
             document.getElementById('aktif').checked = item.aktif;
             
-            // Set kegiatan (array to textarea)
-            if (item.kegiatan && Array.isArray(item.kegiatan)) {
-                document.getElementById('kegiatan').value = item.kegiatan.join('\n');
-            }
-            
+            // Show preview if image exists
             const preview = document.getElementById('preview-img');
             if (item.gambar_url) {
                 preview.src = item.gambar_url;
@@ -328,28 +337,31 @@ async function editProgram(id) {
             }
             
             editingId = id;
+            window.scrollTo(0, document.getElementById('form-slider').offsetTop);
         }
     } catch (error) {
         console.error('Error:', error);
+        showNotification('Error loading slide data', 'error');
     }
 }
 
-async function deleteProgram(id) {
-    if (confirm('Yakin ingin menghapus program ini?')) {
+async function deleteSlider(id) {
+    if (confirm('Yakin ingin menghapus slide ini?')) {
         try {
             const { error } = await window.supabaseClient
-                .from('program')
+                .from('slider')
                 .delete()
                 .eq('id', id);
             
             if (error) throw error;
             
-            loadProgram();
+            showNotification('Slide berhasil dihapus!', 'success');
+            loadSlider();
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Terjadi kesalahan saat menghapus program.', 'error');
+            showNotification('Terjadi kesalahan saat menghapus slide.', 'error');
         }
     }
 }
 
-loadProgram();
+loadSlider();

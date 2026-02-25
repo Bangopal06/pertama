@@ -1,17 +1,24 @@
 async function loadNews() {
     const newsContainer = document.getElementById('news-list');
     
+    // Tampilkan loading
+    newsContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
+            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #1e3a8a; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+    `;
+    
     try {
         const { data: berita, error } = await window.supabaseClient
             .from('berita')
-            .select('*')
+            .select('id, judul, konten, kategori, gambar_url, tanggal')
             .order('tanggal', { ascending: false })
             .limit(3);
         
         if (error) throw error;
         
         if (!berita || berita.length === 0) {
-            newsContainer.innerHTML = '<p>Belum ada berita tersedia.</p>';
+            newsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #64748b;">Belum ada berita tersedia.</p>';
             return;
         }
         
@@ -23,7 +30,7 @@ async function loadNews() {
             
             return `
                 <div class="news-card">
-                    <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}" alt="${b.judul}" class="news-image">
+                    <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}" alt="${b.judul}" class="news-image" loading="lazy">
                     <div class="news-content">
                         <span class="news-category">${b.kategori}</span>
                         <h3>${b.judul}</h3>
@@ -40,17 +47,24 @@ async function loadNews() {
         }).join('');
     } catch (error) {
         console.error('Error loading news:', error);
-        newsContainer.innerHTML = '<p>Gagal memuat berita.</p>';
+        newsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #dc2626;">Gagal memuat berita.</p>';
     }
 }
 
 async function loadProgram() {
     const programContainer = document.getElementById('program-grid');
     
+    // Tampilkan loading
+    programContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
+            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #1e3a8a; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+    `;
+    
     try {
         const { data: program, error } = await window.supabaseClient
             .from('program')
-            .select('*')
+            .select('id, judul, deskripsi, gambar_url, urutan')
             .eq('aktif', true)
             .order('urutan', { ascending: true })
             .limit(5);
@@ -58,13 +72,13 @@ async function loadProgram() {
         if (error) throw error;
         
         if (!program || program.length === 0) {
-            programContainer.innerHTML = '<p>Belum ada program tersedia.</p>';
+            programContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #64748b;">Belum ada program tersedia.</p>';
             return;
         }
         
         programContainer.innerHTML = program.map(p => `
             <div class="program-card">
-                <img src="${p.gambar_url || 'https://via.placeholder.com/400x250?text=Program'}" alt="${p.judul}">
+                <img src="${p.gambar_url || 'https://via.placeholder.com/400x250?text=Program'}" alt="${p.judul}" loading="lazy">
                 <div class="program-content">
                     <h3>${p.judul}</h3>
                     <p>${p.deskripsi}</p>
@@ -74,7 +88,7 @@ async function loadProgram() {
         `).join('');
     } catch (error) {
         console.error('Error loading program:', error);
-        programContainer.innerHTML = '<p>Gagal memuat program.</p>';
+        programContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #dc2626;">Gagal memuat program.</p>';
     }
 }
 

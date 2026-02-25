@@ -11,10 +11,39 @@ body {
 
 .login-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.back-container {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    color: #667eea;
+    border: 2px solid white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateX(-5px);
 }
 
 .login-box {
