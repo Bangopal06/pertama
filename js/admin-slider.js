@@ -44,33 +44,51 @@ document.querySelectorAll('input[name="image-type"]').forEach(radio => {
         const fileSection = document.getElementById('file-upload-section');
         const urlSection = document.getElementById('url-input-section');
         const preview = document.getElementById('preview-img');
+        const fileInput = document.getElementById('gambar_file');
+        const urlInput = document.getElementById('gambar_url');
         
         if (this.value === 'file') {
             fileSection.style.display = 'block';
             urlSection.style.display = 'none';
-            document.getElementById('gambar_url').value = '';
+            urlInput.value = '';
+            // Jangan reset currentImageUrl jika sedang edit dan ada gambar
+            if (!editingId) {
+                preview.style.display = 'none';
+                currentImageUrl = null;
+            }
         } else {
             fileSection.style.display = 'none';
             urlSection.style.display = 'block';
-            document.getElementById('gambar_file').value = '';
-            preview.style.display = 'none';
+            fileInput.value = '';
+            // Jangan reset currentImageUrl jika sedang edit dan ada gambar
+            if (!editingId) {
+                preview.style.display = 'none';
+                currentImageUrl = null;
+            }
         }
+        console.log('Image type changed to:', this.value);
     });
 });
 
 // Preview gambar dari URL
 document.getElementById('gambar_url').addEventListener('input', function(e) {
-    const url = e.target.value;
+    const url = e.target.value.trim();
     const preview = document.getElementById('preview-img');
     
     if (url) {
         preview.src = url;
         preview.style.display = 'block';
+        currentImageUrl = url;
+        console.log('URL input updated:', currentImageUrl);
+        
         preview.onerror = function() {
             preview.style.display = 'none';
             showNotification('URL gambar tidak valid atau tidak bisa diakses', 'error');
         };
-        currentImageUrl = url;
+        
+        preview.onload = function() {
+            console.log('Image loaded successfully from URL');
+        };
     } else {
         preview.style.display = 'none';
         currentImageUrl = null;
@@ -117,14 +135,21 @@ document.getElementById('slider-form').addEventListener('submit', async function
     submitBtn.textContent = 'Menyimpan...';
     
     try {
-        let gambarUrl = currentImageUrl;
+        let gambarUrl = null;
         
         // Cek apakah menggunakan URL atau file upload
         const imageType = document.querySelector('input[name="image-type"]:checked').value;
         
         if (imageType === 'url') {
             // Gunakan URL yang diinput
-            gambarUrl = document.getElementById('gambar_url').value || currentImageUrl;
+            const urlInput = document.getElementById('gambar_url').value.trim();
+            if (urlInput) {
+                gambarUrl = urlInput;
+                console.log('Using URL input:', gambarUrl);
+            } else if (currentImageUrl) {
+                gambarUrl = currentImageUrl;
+                console.log('Using current URL:', gambarUrl);
+            }
         } else {
             // Upload gambar jika ada file baru
             const fileInput = document.getElementById('gambar_file');
@@ -143,16 +168,23 @@ document.getElementById('slider-form').addEventListener('submit', async function
                 }
                 
                 gambarUrl = uploadedUrl;
+                console.log('Uploaded to storage:', gambarUrl);
+            } else if (currentImageUrl) {
+                // Jika edit dan tidak upload file baru, gunakan URL lama
+                gambarUrl = currentImageUrl;
+                console.log('Using existing image:', gambarUrl);
             }
         }
         
         // Validasi gambar wajib ada
         if (!gambarUrl) {
-            showNotification('Gambar wajib diisi!', 'error');
+            showNotification('Gambar wajib diisi! Pilih file atau masukkan URL gambar.', 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Simpan';
             return;
         }
+        
+        console.log('Final gambar_url:', gambarUrl);
         
         const sliderData = {
             judul: document.getElementById('judul').value,
