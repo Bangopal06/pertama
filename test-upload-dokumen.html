@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload Dokumen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1d4ed8; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        pre {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Upload Dokumen Siswa</h1>
+    
+    <div class="test-box">
+        <h3>1. Cek Storage Bucket</h3>
+        <button onclick="checkBucket()">Cek Bucket 'siswa-documents'</button>
+        <pre id="bucket-result"></pre>
+    </div>
+    
+    <div class="test-box">
+        <h3>2. Test Upload File</h3>
+        <p>Pilih file (PDF/JPG/PNG, max 2MB):</p>
+        <input type="file" id="test-file" accept=".pdf,.jpg,.jpeg,.png">
+        <br><br>
+        <button onclick="testUpload()">Upload File</button>
+        <pre id="upload-result"></pre>
+    </div>
+    
+    <div class="test-box">
+        <h3>3. Cek Tabel siswa_dokumen</h3>
+        <button onclick="checkTable()">Cek Tabel Database</button>
+        <pre id="table-result"></pre>
+    </div>
+
+    <script src="js/supabase-config.js"></script>
+    <script>
+        async function checkBucket() {
+            const resultDiv = document.getElementById('bucket-result');
+            resultDiv.innerHTML = 'Checking...';
+            
+            try {
+                // List buckets
+                const { data: buckets, error } = await window.supabaseClient.storage.listBuckets();
+                
+                if (error) throw error;
+                
+                const siswaBucket = buckets.find(b => b.name === 'siswa-documents');
+                
+                if (siswaBucket) {
+                    resultDiv.innerHTML = '<span class="success">✅ Bucket "siswa-documents" DITEMUKAN!</span>\n\n' +
+                        'Bucket Info:\n' + JSON.stringify(siswaBucket, null, 2);
+                } else {
+                    resultDiv.innerHTML = '<span class="error">❌ Bucket "siswa-documents" TIDAK DITEMUKAN!</span>\n\n' +
+                        'Buckets yang ada:\n' + JSON.stringify(buckets.map(b => b.name), null, 2) + '\n\n' +
+                        '⚠️ SOLUSI: Buat bucket "siswa-documents" di Supabase Dashboard > Storage';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error: ' + error.message + '</span>';
+            }
+        }
+        
+        async function testUpload() {
+            const fileInput = document.getElementById('test-file');
+            const resultDiv = document.getElementById('upload-result');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.innerHTML = '<span class="error">Pilih file terlebih dahulu!</span>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            resultDiv.innerHTML = 'Uploading...';
+            
+            try {
+                // Validate file size
+                if (file.size > 2 * 1024 * 1024) {
+                    throw new Error('File terlalu besar! Max 2MB');
+                }
+                
+                // Upload to storage
+                const fileName = `test_${Date.now()}_${file.name}`;
+                const { data, error } = await window.supabaseClient.storage
+                    .from('siswa-documents')
+                    .upload(fileName, file);
+                
+                if (error) throw error;
+                
+                // Get public URL
+                const { data: urlData } = window.supabaseClient.storage
+                    .from('siswa-documents')
+                    .getPublicUrl(fileName);
+                
+                resultDiv.innerHTML = '<span class="success">✅ Upload BERHASIL!</span>\n\n' +
+                    'File: ' + file.name + '\n' +
+                    'Size: ' + (file.size / 1024).toFixed(2) + ' KB\n' +
+                    'Path: ' + data.path + '\n' +
+                    'URL: ' + urlData.publicUrl + '\n\n' +
+                    '<a href="' + urlData.publicUrl + '" target="_blank">Lihat File</a>';
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Upload GAGAL!</span>\n\n' +
+                    'Error: ' + error.message + '\n\n' +
+                    'Kemungkinan penyebab:\n' +
+                    '1. Bucket "siswa-documents" belum dibuat\n' +
+                    '2. Bucket tidak public\n' +
+                    '3. File terlalu besar (max 2MB)';
+            }
+        }
+        
+        async function checkTable() {
+            const resultDiv = document.getElementById('table-result');
+            resultDiv.innerHTML = 'Checking...';
+            
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('siswa_dokumen')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) throw error;
+                
+                resultDiv.innerHTML = '<span class="success">✅ Tabel "siswa_dokumen" OK!</span>\n\n' +
+                    'Jumlah data: ' + data.length + '\n\n' +
+                    (data.length > 0 ? JSON.stringify(data, null, 2) : 'Belum ada data dokumen');
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error: ' + error.message + '</span>\n\n' +
+                    '⚠️ SOLUSI: Jalankan file SETUP-DOKUMEN-SISWA.sql di Supabase SQL Editor';
+            }
+        }
+        
+        // Auto check on load
+        window.onload = () => {
+            checkBucket();
+            checkTable();
+        };
+    </script>
+</body>
+</html>

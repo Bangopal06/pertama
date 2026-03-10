@@ -46,6 +46,86 @@
             margin: 10px 0;
             background: #f8f9fa;
         }
+        .dokumen-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .dokumen-table th,
+        .dokumen-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .dokumen-table th {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .dokumen-table td {
+            font-size: 13px;
+        }
+        .dokumen-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .jenis-badge {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .jenis-badge.wajib {
+            background: #dc3545;
+            color: white;
+        }
+        .status-icon {
+            color: #16a34a;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .btn-upload-doc,
+        .btn-download-doc {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-upload-doc {
+            background: #06b6d4;
+            color: white;
+        }
+        .btn-upload-doc:hover {
+            background: #0891b2;
+        }
+        .btn-download-doc {
+            background: #16a34a;
+            color: white;
+        }
+        .btn-download-doc:hover {
+            background: #15803d;
+        }
+        .btn-finish {
+            background: #06b6d4;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-finish:hover {
+            background: #0891b2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -96,49 +176,126 @@
             <!-- Dokumen Section -->
             <section id="dokumen-section" class="content-section" style="display:none;">
                 <div class="info-card">
-                    <h3>Upload Dokumen Persyaratan</h3>
-                    <p>Silakan upload dokumen-dokumen berikut (format: PDF, JPG, PNG, max 2MB):</p>
+                    <p style="margin-bottom: 20px; color: #666;">
+                        Jangan lupa untuk <strong style="color: #16a34a;">Cek Data dan Tutup</strong> agar berkas anda dapat langsung diproses!!! 
+                    </p>
                     
-                    <div class="dokumen-group">
-                        <h4>1. Kartu Keluarga</h4>
-                        <div class="upload-area" id="upload-kk">
-                            <input type="file" id="file-kk" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
-                            <p>📄 Klik atau drag file ke sini</p>
-                            <button onclick="document.getElementById('file-kk').click()" class="btn-secondary">Pilih File</button>
-                        </div>
-                        <div id="file-kk-list"></div>
+                    <div class="table-container">
+                        <table class="dokumen-table">
+                            <thead>
+                                <tr style="background: #16a34a; color: white;">
+                                    <th style="width: 50px;">No</th>
+                                    <th>Label</th>
+                                    <th style="width: 100px;">Jenis</th>
+                                    <th style="width: 150px;">Status / Pesan</th>
+                                    <th style="width: 200px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dokumen-tbody">
+                                <tr>
+                                    <td>1</td>
+                                    <td>Kartu Keluarga (KK)</td>
+                                    <td><span class="jenis-badge wajib">WAJIB</span></td>
+                                    <td id="status-kk"></td>
+                                    <td>
+                                        <button class="btn-upload-doc" data-doc="kk">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                            </svg>
+                                            Unggah
+                                        </button>
+                                        <button class="btn-download-doc" data-doc="kk" style="display:none;">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                            </svg>
+                                            Unduh
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Akta Kelahiran</td>
+                                    <td><span class="jenis-badge wajib">WAJIB</span></td>
+                                    <td id="status-akta"></td>
+                                    <td>
+                                        <button class="btn-upload-doc" data-doc="akta">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                            </svg>
+                                            Unggah
+                                        </button>
+                                        <button class="btn-download-doc" data-doc="akta" style="display:none;">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                            </svg>
+                                            Unduh
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Ijazah / SKHUN SMP</td>
+                                    <td><span class="jenis-badge wajib">WAJIB</span></td>
+                                    <td id="status-ijazah"></td>
+                                    <td>
+                                        <button class="btn-upload-doc" data-doc="ijazah">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                            </svg>
+                                            Unggah
+                                        </button>
+                                        <button class="btn-download-doc" data-doc="ijazah" style="display:none;">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                            </svg>
+                                            Unduh
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Pas Foto 3x4 (Background Merah/Biru)</td>
+                                    <td><span class="jenis-badge wajib">WAJIB</span></td>
+                                    <td id="status-foto"></td>
+                                    <td>
+                                        <button class="btn-upload-doc" data-doc="foto">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                            </svg>
+                                            Unggah
+                                        </button>
+                                        <button class="btn-download-doc" data-doc="foto" style="display:none;">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                            </svg>
+                                            Unduh
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="dokumen-group">
-                        <h4>2. Akta Kelahiran</h4>
-                        <div class="upload-area" id="upload-akta">
-                            <input type="file" id="file-akta" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
-                            <p>📄 Klik atau drag file ke sini</p>
-                            <button onclick="document.getElementById('file-akta').click()" class="btn-secondary">Pilih File</button>
-                        </div>
-                        <div id="file-akta-list"></div>
-                    </div>
-
-                    <div class="dokumen-group">
-                        <h4>3. Ijazah / SKHUN</h4>
-                        <div class="upload-area" id="upload-ijazah">
-                            <input type="file" id="file-ijazah" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
-                            <p>📄 Klik atau drag file ke sini</p>
-                            <button onclick="document.getElementById('file-ijazah').click()" class="btn-secondary">Pilih File</button>
-                        </div>
-                        <div id="file-ijazah-list"></div>
-                    </div>
-
-                    <div class="dokumen-group">
-                        <h4>4. Pas Foto 3x4</h4>
-                        <div class="upload-area" id="upload-foto">
-                            <input type="file" id="file-foto" accept=".jpg,.jpeg,.png" style="display:none">
-                            <p>📷 Klik atau drag file ke sini</p>
-                            <button onclick="document.getElementById('file-foto').click()" class="btn-secondary">Pilih File</button>
-                        </div>
-                        <div id="file-foto-list"></div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn-finish" onclick="finishUpload()">
+                            Cek Data Dan Tutup
+                        </button>
                     </div>
                 </div>
+
+                <!-- Hidden file input -->
+                <input type="file" id="file-upload-hidden" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
             </section>
 
             <!-- Pembayaran Section -->

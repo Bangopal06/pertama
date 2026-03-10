@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Siswa Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .debug-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1d4ed8; }
+        pre {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Siswa Login & Data</h1>
+    
+    <div class="debug-box">
+        <h3>1. Cek LocalStorage</h3>
+        <button onclick="checkLocalStorage()">Cek LocalStorage</button>
+        <pre id="localStorage-result"></pre>
+    </div>
+    
+    <div class="debug-box">
+        <h3>2. Cek Data Siswa dari Database</h3>
+        <input type="text" id="siswa-id" placeholder="Masukkan siswa_id" style="padding: 8px; width: 200px;">
+        <button onclick="checkSiswaData()">Cek Data Siswa</button>
+        <pre id="siswa-data-result"></pre>
+    </div>
+    
+    <div class="debug-box">
+        <h3>3. Test Login Siswa</h3>
+        <input type="text" id="test-username" placeholder="NISN atau No. Pendaftaran" style="padding: 8px; width: 250px;"><br><br>
+        <input type="text" id="test-password" placeholder="Password" style="padding: 8px; width: 250px;"><br><br>
+        <button onclick="testLogin()">Test Login</button>
+        <pre id="login-result"></pre>
+    </div>
+    
+    <div class="debug-box">
+        <h3>4. Lihat Semua Data PPDB</h3>
+        <button onclick="listAllPPDB()">Tampilkan Semua Data PPDB</button>
+        <pre id="ppdb-list-result"></pre>
+    </div>
+
+    <script src="js/supabase-config.js"></script>
+    <script>
+        function checkLocalStorage() {
+            const result = {
+                siswa_id: localStorage.getItem('siswa_id'),
+                siswa_nama: localStorage.getItem('siswa_nama'),
+                siswa_username: localStorage.getItem('siswa_username')
+            };
+            
+            document.getElementById('localStorage-result').innerHTML = 
+                JSON.stringify(result, null, 2);
+            
+            if (result.siswa_id) {
+                document.getElementById('siswa-id').value = result.siswa_id;
+            }
+        }
+        
+        async function checkSiswaData() {
+            const siswaId = document.getElementById('siswa-id').value;
+            const resultDiv = document.getElementById('siswa-data-result');
+            
+            if (!siswaId) {
+                resultDiv.innerHTML = '<span class="error">Masukkan siswa_id!</span>';
+                return;
+            }
+            
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('ppdb')
+                    .select('*')
+                    .eq('id', siswaId)
+                    .single();
+                
+                if (error) throw error;
+                
+                resultDiv.innerHTML = '<span class="success">✅ Data ditemukan!</span>\n\n' + 
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error: ' + error.message + '</span>';
+            }
+        }
+        
+        async function testLogin() {
+            const username = document.getElementById('test-username').value;
+            const password = document.getElementById('test-password').value;
+            const resultDiv = document.getElementById('login-result');
+            
+            if (!username || !password) {
+                resultDiv.innerHTML = '<span class="error">Isi username dan password!</span>';
+                return;
+            }
+            
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('ppdb')
+                    .select('*')
+                    .or(`username.eq.${username},no_pendaftaran.eq.${username},nisn.eq.${username}`)
+                    .eq('password', password)
+                    .single();
+                
+                if (error) throw error;
+                
+                resultDiv.innerHTML = '<span class="success">✅ Login berhasil!</span>\n\n' +
+                    'ID: ' + data.id + '\n' +
+                    'Nama: ' + data.nama + '\n' +
+                    'NISN: ' + data.nisn + '\n' +
+                    'No. Pendaftaran: ' + data.no_pendaftaran + '\n\n' +
+                    'Full Data:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Login gagal: ' + error.message + '</span>';
+            }
+        }
+        
+        async function listAllPPDB() {
+            const resultDiv = document.getElementById('ppdb-list-result');
+            resultDiv.innerHTML = 'Loading...';
+            
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('ppdb')
+                    .select('id, nama, nisn, no_pendaftaran, username, password, status')
+                    .order('id', { ascending: false })
+                    .limit(10);
+                
+                if (error) throw error;
+                
+                if (data.length === 0) {
+                    resultDiv.innerHTML = '<span class="error">❌ Tidak ada data PPDB!</span>';
+                    return;
+                }
+                
+                resultDiv.innerHTML = '<span class="success">✅ Ditemukan ' + data.length + ' data PPDB (10 terbaru)</span>\n\n' +
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error: ' + error.message + '</span>';
+            }
+        }
+        
+        // Auto check localStorage on load
+        checkLocalStorage();
+    </script>
+</body>
+</html>

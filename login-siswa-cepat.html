@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Cepat - Portal Siswa</title>
+    <title>Login Siswa Cepat - Test</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
         .container {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             max-width: 500px;
             width: 100%;
         }
@@ -32,158 +36,187 @@
             color: #666;
             text-align: center;
             margin-bottom: 30px;
-        }
-        .info-box {
-            background: #e7f3ff;
-            border-left: 5px solid #007bff;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-        .info-box h3 {
-            margin: 0 0 15px 0;
-            color: #007bff;
-        }
-        .info-box p {
-            margin: 8px 0;
-            color: #333;
-        }
-        .info-box strong {
-            color: #007bff;
-            font-size: 18px;
-        }
-        .btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            width: 100%;
-            margin: 10px 0;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            background: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-        }
-        .btn-secondary {
-            background: #007bff;
-        }
-        .btn-secondary:hover {
-            background: #0056b3;
+            font-size: 14px;
         }
         .form-group {
-            margin: 15px 0;
+            margin-bottom: 20px;
         }
-        .form-group label {
+        label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #333;
-            font-weight: bold;
+            font-weight: 500;
         }
-        .form-group input {
+        input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 16px;
-            box-sizing: border-box;
+            transition: border-color 0.3s;
         }
-        .form-group input:focus {
+        input:focus {
             outline: none;
-            border-color: #007bff;
+            border-color: #667eea;
         }
-        .alert {
-            background: #d4edda;
-            border-left: 5px solid #28a745;
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .debug-info {
+            margin-top: 20px;
             padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-            color: #155724;
+            background: #f5f5f5;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .info h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .info p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎓 Portal Siswa</h1>
-        <p class="subtitle">Login dengan kredensial yang Anda terima</p>
-
-        <div class="alert">
-            ✅ Pendaftaran berhasil! Silakan login dengan informasi di bawah
+        <h1>🎓 Login Siswa (Test)</h1>
+        <p class="subtitle">Masukkan NISN dan Password dari pendaftaran PPDB</p>
+        
+        <div class="info">
+            <h3>ℹ️ Cara Login:</h3>
+            <p>
+                1. Masukkan <strong>NISN</strong> yang Anda gunakan saat daftar PPDB<br>
+                2. Masukkan <strong>Password</strong> yang diberikan saat pendaftaran<br>
+                3. Klik tombol Login<br>
+                4. Anda akan otomatis masuk ke Portal Siswa
+            </p>
         </div>
-
-        <div class="info-box">
-            <h3>📋 Informasi Login Anda:</h3>
-            <p><strong>No. Pendaftaran:</strong> PPDB01294395</p>
-            <p><strong>Username:</strong> 99</p>
-            <p><strong>Password:</strong> ueeugd1l</p>
-        </div>
-
+        
         <form id="login-form">
             <div class="form-group">
-                <label for="username">Username / No. Pendaftaran</label>
-                <input type="text" id="username" name="username" value="99" required>
+                <label for="nisn">NISN (Username)</label>
+                <input type="text" id="nisn" placeholder="Contoh: 1234567890" required>
             </div>
             
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" value="ueeugd1l" required>
+                <input type="text" id="password" placeholder="Password dari pendaftaran" required>
             </div>
             
-            <button type="submit" class="btn">🚀 MASUK KE DASHBOARD</button>
+            <button type="submit" id="btn-login">Login ke Portal Siswa</button>
         </form>
-
-        <button class="btn btn-secondary" onclick="window.location.href='login.html'">
-            📱 Buka Halaman Login Resmi
-        </button>
+        
+        <div class="debug-info" id="debug-info" style="display:none;"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script>
+        const debugDiv = document.getElementById('debug-info');
+        const btnLogin = document.getElementById('btn-login');
+        
+        function showDebug(message, type = 'info') {
+            debugDiv.style.display = 'block';
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+        }
+        
         document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const nisn = document.getElementById('nisn').value.trim();
+            const password = document.getElementById('password').value.trim();
             
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Memproses...';
+            debugDiv.innerHTML = '';
+            showDebug('🔍 Memulai proses login...', 'info');
+            showDebug(`Username (NISN): ${nisn}`, 'info');
+            
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Memproses...';
             
             try {
-                // Cari siswa berdasarkan username dan password
+                showDebug('📡 Menghubungi database...', 'info');
+                
+                // Cari siswa berdasarkan NISN dan password
                 const { data, error } = await window.supabaseClient
                     .from('ppdb')
                     .select('*')
-                    .or(`username.eq.${username},no_pendaftaran.eq.${username}`)
+                    .eq('nisn', nisn)
                     .eq('password', password)
                     .single();
                 
-                if (error || !data) {
-                    alert('Username atau password salah!');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '🚀 MASUK KE DASHBOARD';
+                if (error) {
+                    showDebug('❌ Error dari database: ' + error.message, 'error');
+                    throw error;
+                }
+                
+                if (!data) {
+                    showDebug('❌ Data tidak ditemukan!', 'error');
+                    alert('NISN atau Password salah!\n\nPastikan Anda sudah daftar PPDB dan menggunakan NISN + Password yang benar.');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Login ke Portal Siswa';
                     return;
                 }
                 
-                // Simpan session
+                showDebug('✅ Data siswa ditemukan!', 'success');
+                showDebug(`ID: ${data.id}`, 'info');
+                showDebug(`Nama: ${data.nama}`, 'info');
+                showDebug(`NISN: ${data.nisn}`, 'info');
+                
+                // Simpan ke localStorage
                 localStorage.setItem('siswa_id', data.id);
                 localStorage.setItem('siswa_nama', data.nama);
-                localStorage.setItem('siswa_username', data.username || data.no_pendaftaran);
+                localStorage.setItem('siswa_username', data.nisn);
+                
+                showDebug('💾 Data disimpan ke localStorage', 'success');
+                showDebug('🚀 Redirect ke portal siswa...', 'success');
                 
                 // Redirect ke dashboard
-                window.location.href = 'siswa/dashboard.html';
+                setTimeout(() => {
+                    window.location.href = 'siswa/dashboard.html';
+                }, 1000);
                 
             } catch (error) {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 MASUK KE DASHBOARD';
+                showDebug('❌ Terjadi kesalahan: ' + error.message, 'error');
+                alert('Login gagal!\n\n' + error.message);
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Login ke Portal Siswa';
             }
         });
     </script>

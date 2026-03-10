@@ -34,6 +34,8 @@ document.getElementById('ppdb-form').addEventListener('submit', async function(e
         
         if (error) throw error;
         
+        console.log('PPDB berhasil, data:', data[0]);
+        
         // Buat data pembayaran default
         await window.supabaseClient
             .from('siswa_pembayaran')
@@ -45,9 +47,17 @@ document.getElementById('ppdb-form').addEventListener('submit', async function(e
             }]);
         
         // Tampilkan info login
-        alert(`Pendaftaran berhasil!\n\nNo. Pendaftaran: ${noPendaftaran}\nUsername: ${username}\nPassword: ${password}\n\nSimpan informasi ini untuk login ke portal siswa.\nInformasi juga akan dikirim ke email Anda.`);
+        alert(`Pendaftaran berhasil!\n\nNo. Pendaftaran: ${noPendaftaran}\nUsername (NISN): ${username}\nPassword: ${password}\n\nSimpan informasi ini untuk login ke portal siswa.`);
         
-        e.target.reset();
+        // Auto login dan redirect ke portal siswa
+        localStorage.setItem('siswa_id', data[0].id);
+        localStorage.setItem('siswa_nama', data[0].nama);
+        localStorage.setItem('siswa_username', username);
+        
+        // Redirect ke portal siswa
+        setTimeout(() => {
+            window.location.href = 'siswa/dashboard.html';
+        }, 1000);
     } catch (error) {
         console.error('Error:', error);
         alert('Terjadi kesalahan saat mendaftar. Silakan coba lagi.');
