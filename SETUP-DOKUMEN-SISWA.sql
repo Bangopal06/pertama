@@ -22,10 +22,16 @@ CREATE TABLE siswa_dokumen (
     UNIQUE(siswa_id, jenis_dokumen)
 );
 
--- 3. Disable RLS untuk development
+-- 3. DISABLE RLS (penting!)
 ALTER TABLE siswa_dokumen DISABLE ROW LEVEL SECURITY;
 
--- 4. Buat index
+-- 4. Drop existing policies jika ada
+DROP POLICY IF EXISTS "Allow public insert" ON siswa_dokumen;
+DROP POLICY IF EXISTS "Allow public select" ON siswa_dokumen;
+DROP POLICY IF EXISTS "Allow public update" ON siswa_dokumen;
+DROP POLICY IF EXISTS "Allow public delete" ON siswa_dokumen;
+
+-- 5. Buat index
 CREATE INDEX idx_siswa_dokumen_siswa ON siswa_dokumen(siswa_id);
 CREATE INDEX idx_siswa_dokumen_jenis ON siswa_dokumen(jenis_dokumen);
 CREATE INDEX idx_siswa_dokumen_status ON siswa_dokumen(status);

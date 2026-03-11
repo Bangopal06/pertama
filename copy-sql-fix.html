@@ -1,296 +1,55 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copy SQL yang Sudah Diperbaiki</title>
+    <title>Copy SQL Fix</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .alert-error {
-            background: #f8d7da;
-            border-left: 5px solid #dc3545;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-            color: #721c24;
-        }
-        .alert-success {
-            background: #d4edda;
-            border-left: 5px solid #28a745;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-            color: #155724;
-        }
-        .btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 20px 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 20px;
-            font-weight: bold;
-            width: 100%;
-            margin: 15px 0;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            background: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-        }
-        .btn-secondary {
-            background: #007bff;
-        }
-        .btn-secondary:hover {
-            background: #0056b3;
-        }
-        .steps {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .steps ol {
-            margin: 10px 0 0 20px;
-            line-height: 2;
-        }
-        .steps li {
-            color: #333;
-        }
-        .sql-preview {
-            background: #2d3748;
-            color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            margin: 15px 0;
-        }
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+        .sql-box { background: #2d2d2d; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        button { background: #0e639c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #1177bb; }
+        .success { color: #4ec9b0; }
+        pre { white-space: pre-wrap; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔧 SQL yang Sudah Diperbaiki</h1>
-        
-        <div class="alert-error">
-            <strong>❌ Error yang terjadi:</strong><br>
-            Syntax error pada CREATE POLICY - tanda kutip tidak konsisten
-        </div>
+    <h1>🔧 Fix Storage RLS - Copy SQL Ini</h1>
+    
+    <div class="sql-box">
+        <h3>SQL untuk disable RLS di Storage:</h3>
+        <pre id="sql-code">-- Disable RLS untuk bucket siswa-documents
+ALTER TABLE storage.objects DISABLE ROW LEVEL SECURITY;
 
-        <div class="alert-success">
-            <strong>✅ Sudah diperbaiki!</strong><br>
-            SQL di bawah ini sudah diperbaiki dan siap digunakan
-        </div>
+-- Atau buat policy yang allow semua
+CREATE POLICY "Allow all operations on siswa-documents" 
+ON storage.objects 
+FOR ALL 
+USING (bucket_id = 'siswa-documents');
 
-        <button class="btn" onclick="copySQL()">
-            📋 COPY SQL YANG SUDAH DIPERBAIKI
-        </button>
-
-        <div id="copy-status" style="display:none;" class="alert-success">
-            ✅ SQL berhasil dicopy! Sekarang paste ke Supabase
-        </div>
-
-        <div class="steps">
-            <strong>📝 Langkah selanjutnya:</strong>
-            <ol>
-                <li>Kembali ke tab Supabase SQL Editor</li>
-                <li>Hapus semua SQL yang ada (Ctrl+A, lalu Delete)</li>
-                <li>Paste SQL baru (Ctrl+V)</li>
-                <li>Klik tombol <strong>"RUN"</strong></li>
-                <li>Tunggu sampai muncul "Success"</li>
-            </ol>
-        </div>
-
-        <button class="btn btn-secondary" onclick="openSupabase()">
-            🌐 BUKA SUPABASE SQL EDITOR
-        </button>
-
-        <h3>Preview SQL:</h3>
-        <div class="sql-preview" id="sql-preview"></div>
+-- Set bucket sebagai public
+UPDATE storage.buckets 
+SET public = true 
+WHERE id = 'siswa-documents';</pre>
+        <button onclick="copySQL()">📋 Copy SQL</button>
+        <p id="status"></p>
+    </div>
+    
+    <div class="sql-box">
+        <h3>Langkah-langkah:</h3>
+        <ol>
+            <li>Klik tombol "Copy SQL" di atas</li>
+            <li>Buka Supabase SQL Editor</li>
+            <li>Paste dan Run SQL</li>
+            <li>Refresh dashboard siswa</li>
+            <li>Coba upload dokumen lagi</li>
+        </ol>
     </div>
 
     <script>
-        const sqlFixed = `-- ============================================
--- SQL SETUP YANG SUDAH DIPERBAIKI
--- ============================================
-
--- BAGIAN 1: UPDATE TABEL PPDB
-ALTER TABLE ppdb 
-ADD COLUMN IF NOT EXISTS username TEXT UNIQUE,
-ADD COLUMN IF NOT EXISTS password TEXT,
-ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending',
-ADD COLUMN IF NOT EXISTS no_pendaftaran TEXT UNIQUE;
-
--- BAGIAN 2: TABEL DOKUMEN SISWA
-CREATE TABLE IF NOT EXISTS siswa_dokumen (
-  id BIGSERIAL PRIMARY KEY,
-  ppdb_id BIGINT REFERENCES ppdb(id) ON DELETE CASCADE,
-  jenis_dokumen TEXT NOT NULL,
-  nama_file TEXT NOT NULL,
-  file_url TEXT NOT NULL,
-  ukuran_file INTEGER,
-  status TEXT DEFAULT 'pending',
-  catatan TEXT,
-  uploaded_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE siswa_dokumen DISABLE ROW LEVEL SECURITY;
-
--- BAGIAN 3: TABEL PEMBAYARAN SISWA
-CREATE TABLE IF NOT EXISTS siswa_pembayaran (
-  id BIGSERIAL PRIMARY KEY,
-  ppdb_id BIGINT REFERENCES ppdb(id) ON DELETE CASCADE,
-  jenis_pembayaran TEXT NOT NULL,
-  jumlah DECIMAL(12,2) NOT NULL,
-  status TEXT DEFAULT 'belum_bayar',
-  bukti_url TEXT,
-  tanggal_bayar TIMESTAMPTZ,
-  tanggal_verifikasi TIMESTAMPTZ,
-  catatan TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE siswa_pembayaran DISABLE ROW LEVEL SECURITY;
-
--- BAGIAN 4: SETUP STORAGE BUCKETS
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('dokumen-siswa', 'dokumen-siswa', true)
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('bukti-pembayaran', 'bukti-pembayaran', true)
-ON CONFLICT (id) DO NOTHING;
-
--- BAGIAN 5: STORAGE POLICIES (DIPERBAIKI)
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE schemaname = 'storage' 
-    AND tablename = 'objects' 
-    AND policyname = 'Allow public upload dokumen-siswa'
-  ) THEN
-    CREATE POLICY "Allow public upload dokumen-siswa"
-    ON storage.objects FOR INSERT
-    TO public
-    WITH CHECK (bucket_id = 'dokumen-siswa');
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE schemaname = 'storage' 
-    AND tablename = 'objects' 
-    AND policyname = 'Allow public read dokumen-siswa'
-  ) THEN
-    CREATE POLICY "Allow public read dokumen-siswa"
-    ON storage.objects FOR SELECT
-    TO public
-    USING (bucket_id = 'dokumen-siswa');
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE schemaname = 'storage' 
-    AND tablename = 'objects' 
-    AND policyname = 'Allow public delete dokumen-siswa'
-  ) THEN
-    CREATE POLICY "Allow public delete dokumen-siswa"
-    ON storage.objects FOR DELETE
-    TO public
-    USING (bucket_id = 'dokumen-siswa');
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE schemaname = 'storage' 
-    AND tablename = 'objects' 
-    AND policyname = 'Allow public upload bukti-pembayaran'
-  ) THEN
-    CREATE POLICY "Allow public upload bukti-pembayaran"
-    ON storage.objects FOR INSERT
-    TO public
-    WITH CHECK (bucket_id = 'bukti-pembayaran');
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE schemaname = 'storage' 
-    AND tablename = 'objects' 
-    AND policyname = 'Allow public read bukti-pembayaran'
-  ) THEN
-    CREATE POLICY "Allow public read bukti-pembayaran"
-    ON storage.objects FOR SELECT
-    TO public
-    USING (bucket_id = 'bukti-pembayaran');
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE schemaname = 'storage' 
-    AND tablename = 'objects' 
-    AND policyname = 'Allow public delete bukti-pembayaran'
-  ) THEN
-    CREATE POLICY "Allow public delete bukti-pembayaran"
-    ON storage.objects FOR DELETE
-    TO public
-    USING (bucket_id = 'bukti-pembayaran');
-  END IF;
-END $$;
-
--- ============================================
--- SELESAI!
--- ============================================`;
-
-        document.getElementById('sql-preview').textContent = sqlFixed.substring(0, 800) + '\n\n... (dan seterusnya)';
-
         function copySQL() {
-            navigator.clipboard.writeText(sqlFixed).then(() => {
-                document.getElementById('copy-status').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('copy-status').style.display = 'none';
-                }, 10000);
-            }).catch(err => {
-                alert('Gagal copy otomatis. Silakan copy manual dari file FIX-SQL-SETUP.sql');
+            const sql = document.getElementById('sql-code').textContent;
+            navigator.clipboard.writeText(sql).then(() => {
+                document.getElementById('status').innerHTML = '<span class="success">✅ SQL berhasil dicopy! Paste di Supabase SQL Editor.</span>';
             });
-        }
-
-        function openSupabase() {
-            window.open('https://supabase.com/dashboard/project/dyawxkqcrzawgfglzbcm/sql/new', '_blank');
         }
     </script>
 </body>

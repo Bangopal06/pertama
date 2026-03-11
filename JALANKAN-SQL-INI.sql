@@ -1,89 +1,49 @@
 -- ============================================
--- COPY SEMUA SQL INI KE SUPABASE SQL EDITOR
--- LALU KLIK "RUN"
+-- JALANKAN SQL INI UNTUK FIX SEMUA MASALAH
+-- Copy SEMUA dan paste di Supabase SQL Editor
 -- ============================================
 
--- BAGIAN 1: UPDATE TABEL PPDB
--- Tambah kolom untuk sistem login siswa
-ALTER TABLE ppdb 
-ADD COLUMN IF NOT EXISTS username TEXT UNIQUE,
-ADD COLUMN IF NOT EXISTS password TEXT,
-ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending',
-ADD COLUMN IF NOT EXISTS no_pendaftaran TEXT UNIQUE;
+-- 1. DROP dan RECREATE tabel siswa_dokumen
+DROP TABLE IF EXISTS siswa_dokumen CASCADE;
 
--- BAGIAN 2: TABEL DOKUMEN SISWA
-CREATE TABLE IF NOT EXISTS siswa_dokumen (
-  id BIGSERIAL PRIMARY KEY,
-  ppdb_id BIGINT REFERENCES ppdb(id) ON DELETE CASCADE,
-  jenis_dokumen TEXT NOT NULL,
-  nama_file TEXT NOT NULL,
-  file_url TEXT NOT NULL,
-  ukuran_file INTEGER,
-  status TEXT DEFAULT 'pending',
-  catatan TEXT,
-  uploaded_at TIMESTAMPTZ DEFAULT NOW()
+CREATE TABLE siswa_dokumen (
+    id BIGSERIAL PRIMARY KEY,
+    siswa_id BIGINT NOT NULL REFERENCES ppdb(id) ON DELETE CASCADE,
+    jenis_dokumen VARCHAR(50) NOT NULL,
+    nama_file VARCHAR(255) NOT NULL,
+    file_url TEXT NOT NULL,
+    ukuran_file INTEGER,
+    status VARCHAR(50) DEFAULT 'pending',
+    catatan TEXT,
+    uploaded_at TIMESTAMPTZ DEFAULT NOW(),
+    verified_at TIMESTAMPTZ,
+    verified_by VARCHAR(100),
+    UNIQUE(siswa_id, jenis_dokumen)
 );
 
+-- 2. DISABLE RLS
 ALTER TABLE siswa_dokumen DISABLE ROW LEVEL SECURITY;
 
--- BAGIAN 3: TABEL PEMBAYARAN SISWA
-CREATE TABLE IF NOT EXISTS siswa_pembayaran (
-  id BIGSERIAL PRIMARY KEY,
-  ppdb_id BIGINT REFERENCES ppdb(id) ON DELETE CASCADE,
-  jenis_pembayaran TEXT NOT NULL,
-  jumlah DECIMAL(12,2) NOT NULL,
-  status TEXT DEFAULT 'belum_bayar',
-  bukti_url TEXT,
-  tanggal_bayar TIMESTAMPTZ,
-  tanggal_verifikasi TIMESTAMPTZ,
-  catatan TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- 3. Buat index
+CREATE INDEX idx_siswa_dokumen_siswa ON siswa_dokumen(siswa_id);
+CREATE INDEX idx_siswa_dokumen_jenis ON siswa_dokumen(jenis_dokumen);
+CREATE INDEX idx_siswa_dokumen_status ON siswa_dokumen(status);
 
-ALTER TABLE siswa_pembayaran DISABLE ROW LEVEL SECURITY;
+-- 4. Set bucket siswa-documents sebagai public
+UPDATE storage.buckets 
+SET public = true 
+WHERE id = 'siswa-documents';
 
--- BAGIAN 4: SETUP STORAGE BUCKETS
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('dokumen-siswa', 'dokumen-siswa', true)
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('bukti-pembayaran', 'bukti-pembayaran', true)
-ON CONFLICT (id) DO NOTHING;
-
--- BAGIAN 5: STORAGE POLICIES
-CREATE POLICY IF NOT EXISTS "Allow public upload dokumen-siswa"
-ON storage.objects FOR INSERT
-TO public
-WITH CHECK (bucket_id = 'dokumen-siswa');
-
-CREATE POLICY IF NOT EXISTS "Allow public read dokumen-siswa"
-ON storage.objects FOR SELECT
-TO public
-USING (bucket_id = 'dokumen-siswa');
-
-CREATE POLICY IF NOT EXISTS "Allow public delete dokumen-siswa"
-ON storage.objects FOR DELETE
-TO public
-USING (bucket_id = 'dokumen-siswa');
-
-CREATE POLICY IF NOT EXISTS "Allow public upload bukti-pembayaran"
-ON storage.objects FOR INSERT
-TO public
-WITH CHECK (bucket_id = 'bukti-pembayaran');
-
-CREATE POLICY IF NOT EXISTS "Allow public read bukti-pembayaran"
-ON storage.objects FOR SELECT
-TO public
-USING (bucket_id = 'bukti-pembayaran');
-
-CREATE POLICY IF NOT EXISTS "Allow public delete bukti-pembayaran"
-ON storage.objects FOR DELETE
-TO public
-USING (bucket_id = 'bukti-pembayaran');
+-- 5. Cek hasil
+SELECT 'Tabel siswa_dokumen' as info, tablename as name, rowsecurity::text as value
+FROM pg_tables 
+WHERE tablename = 'siswa_dokumen'
+UNION ALL
+SELECT 'Bucket siswa-documents' as info, id as name, public::text as value
+FROM storage.buckets 
+WHERE id = 'siswa-documents';
 
 -- ============================================
 -- SELESAI!
--- Setelah RUN berhasil, kembali ke test-database.html
--- dan klik "Jalankan Test" lagi
+-- Sekarang coba upload dokumen lagi
 -- ============================================

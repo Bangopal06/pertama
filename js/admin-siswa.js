@@ -18,7 +18,29 @@ async function loadSiswa() {
         if (error) throw error;
         
         allSiswa = data;
-        displaySiswa(data);
+        
+        // Load dokumen dan pembayaran status untuk setiap siswa
+        for (let siswa of allSiswa) {
+            // Cek status dokumen
+            const { data: dokumenData } = await window.supabaseClient
+                .from('siswa_dokumen')
+                .select('status')
+                .eq('siswa_id', siswa.id);
+            
+            siswa.dokumen_verified = dokumenData?.filter(d => d.status === 'verified').length || 0;
+            siswa.dokumen_total = dokumenData?.length || 0;
+            
+            // Cek status pembayaran
+            const { data: pembayaranData } = await window.supabaseClient
+                .from('siswa_pembayaran')
+                .select('status')
+                .eq('ppdb_id', siswa.id);
+            
+            siswa.pembayaran_verified = pembayaranData?.filter(p => p.status === 'verified').length || 0;
+            siswa.pembayaran_total = pembayaranData?.length || 0;
+        }
+        
+        displaySiswa(allSiswa);
         
     } catch (error) {
         console.error('Error:', error);
@@ -44,6 +66,14 @@ function displaySiswa(siswaList) {
                     <p><strong>Email:</strong> ${siswa.email}</p>
                     <p><strong>Telepon:</strong> ${siswa.telepon}</p>
                     <p><strong>Tanggal Daftar:</strong> ${new Date(siswa.tanggal_daftar).toLocaleDateString('id-ID')}</p>
+                    <div style="margin-top: 10px;">
+                        <span style="background: ${siswa.dokumen_verified === 4 ? '#16a34a' : siswa.dokumen_verified > 0 ? '#f59e0b' : '#dc2626'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px;">
+                            📄 Dokumen: ${siswa.dokumen_verified}/4
+                        </span>
+                        <span style="background: ${siswa.pembayaran_verified === siswa.pembayaran_total && siswa.pembayaran_total > 0 ? '#16a34a' : '#f59e0b'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                            💰 Bayar: ${siswa.pembayaran_verified}/${siswa.pembayaran_total}
+                        </span>
+                    </div>
                 </div>
                 <div>
                     <span class="status-badge status-${siswa.status || 'pending'}">${siswa.status || 'pending'}</span>
@@ -134,8 +164,8 @@ async function viewDokumen(siswaId) {
         const { data, error } = await window.supabaseClient
             .from('siswa_dokumen')
             .select('*')
-            .eq('ppdb_id', siswaId)
-            .order('uploaded_at', { ascending: false });
+            .eq('siswa_id', siswaId)  // Changed from ppdb_id to siswa_id
+            .order('uploaded_at', { ascending: false});
         
         if (error) throw error;
         

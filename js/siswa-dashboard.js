@@ -5,6 +5,11 @@ const siswaNama = localStorage.getItem('siswa_nama');
 console.log('=== DEBUG SISWA DASHBOARD ===');
 console.log('siswa_id:', siswaId);
 console.log('siswa_nama:', siswaNama);
+console.log('localStorage full:', {
+    siswa_id: localStorage.getItem('siswa_id'),
+    siswa_nama: localStorage.getItem('siswa_nama'),
+    siswa_username: localStorage.getItem('siswa_username')
+});
 
 if (!siswaId) {
     console.error('siswa_id tidak ditemukan di localStorage!');
@@ -12,7 +17,11 @@ if (!siswaId) {
     window.location.href = '../login.html';
 }
 
-document.getElementById('user-name').textContent = siswaNama;
+// Set nama di header
+const userNameElement = document.getElementById('user-name');
+if (userNameElement) {
+    userNameElement.textContent = siswaNama || 'Siswa';
+}
 
 let siswaData = null;
 
@@ -61,20 +70,42 @@ function displayProfilData() {
     
     console.log('Displaying data:', siswaData);
     
-    document.getElementById('no-pendaftaran').textContent = siswaData.no_pendaftaran || '-';
+    // Update No Pendaftaran
+    const noPendaftaranEl = document.getElementById('no-pendaftaran');
+    if (noPendaftaranEl) {
+        noPendaftaranEl.textContent = siswaData.no_pendaftaran || '-';
+        console.log('✓ No Pendaftaran:', siswaData.no_pendaftaran);
+    }
     
+    // Update Status
     const statusBadge = document.getElementById('status-pendaftaran');
-    statusBadge.textContent = siswaData.status || 'pending';
-    statusBadge.className = 'status-badge status-' + (siswaData.status || 'pending');
+    if (statusBadge) {
+        statusBadge.textContent = siswaData.status || 'pending';
+        statusBadge.className = 'status-badge status-' + (siswaData.status || 'pending');
+        console.log('✓ Status:', siswaData.status);
+    }
     
-    document.getElementById('data-nama').textContent = siswaData.nama || '-';
-    document.getElementById('data-nisn').textContent = siswaData.nisn || '-';
-    document.getElementById('data-ttl').textContent = `${siswaData.tempat_lahir || '-'}, ${siswaData.tanggal_lahir || '-'}`;
-    document.getElementById('data-jk').textContent = siswaData.jenis_kelamin || '-';
-    document.getElementById('data-sekolah').textContent = siswaData.asal_sekolah || '-';
-    document.getElementById('data-alamat').textContent = siswaData.alamat || '-';
-    document.getElementById('data-telepon').textContent = siswaData.telepon || '-';
-    document.getElementById('data-email').textContent = siswaData.email || '-';
+    // Update Data Pribadi
+    const updates = [
+        { id: 'data-nama', value: siswaData.nama, label: 'Nama' },
+        { id: 'data-nisn', value: siswaData.nisn, label: 'NISN' },
+        { id: 'data-ttl', value: `${siswaData.tempat_lahir || '-'}, ${siswaData.tanggal_lahir || '-'}`, label: 'TTL' },
+        { id: 'data-jk', value: siswaData.jenis_kelamin, label: 'Jenis Kelamin' },
+        { id: 'data-sekolah', value: siswaData.asal_sekolah, label: 'Asal Sekolah' },
+        { id: 'data-alamat', value: siswaData.alamat, label: 'Alamat' },
+        { id: 'data-telepon', value: siswaData.telepon, label: 'Telepon' },
+        { id: 'data-email', value: siswaData.email, label: 'Email' }
+    ];
+    
+    updates.forEach(item => {
+        const element = document.getElementById(item.id);
+        if (element) {
+            element.textContent = item.value || '-';
+            console.log(`✓ ${item.label}:`, item.value);
+        } else {
+            console.warn(`⚠️ Element not found: ${item.id}`);
+        }
+    });
     
     console.log('✅ Data profil berhasil ditampilkan');
 }
@@ -103,20 +134,13 @@ document.querySelectorAll('.nav-item').forEach(item => {
         };
         document.getElementById('page-title').textContent = titles[page];
         
-        if (page === 'dokumen') loadDokumen();
+        // Load data for specific pages
         if (page === 'pembayaran') loadPembayaran();
     });
 });
 
-// Upload Dokumen
-const dokumenTypes = ['kk', 'akta', 'ijazah', 'foto'];
-
-dokumenTypes.forEach(type => {
-    const fileInput = document.getElementById('file-' + type);
-    fileInput.addEventListener('change', function() {
-        uploadDokumen(type, this.files[0]);
-    });
-});
+// Upload Dokumen - REMOVED OLD CODE
+// Sekarang menggunakan sistem baru dengan file-upload-hidden dan btn-upload-doc
 
 async function uploadDokumen(jenisDokumen, file) {
     if (!file) return;
@@ -155,7 +179,8 @@ async function uploadDokumen(jenisDokumen, file) {
         if (dbError) throw dbError;
         
         alert('Dokumen berhasil diupload!');
-        loadDokumen();
+        // Reload existing documents to show the new upload
+        loadExistingDocuments();
         
     } catch (error) {
         console.error('Error:', error);
@@ -163,51 +188,7 @@ async function uploadDokumen(jenisDokumen, file) {
     }
 }
 
-async function loadDokumen() {
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('siswa_dokumen')
-            .select('*')
-            .eq('ppdb_id', siswaId)
-            .order('uploaded_at', { ascending: false });
-        
-        if (error) throw error;
-        
-        // Group by jenis_dokumen
-        const grouped = {};
-        data.forEach(doc => {
-            if (!grouped[doc.jenis_dokumen]) grouped[doc.jenis_dokumen] = [];
-            grouped[doc.jenis_dokumen].push(doc);
-        });
-        
-        // Display
-        dokumenTypes.forEach(type => {
-            const listDiv = document.getElementById('file-' + type + '-list');
-            listDiv.innerHTML = '';
-            
-            if (grouped[type]) {
-                grouped[type].forEach(doc => {
-                    const statusClass = doc.status === 'verified' ? 'status-verified' : 
-                                      doc.status === 'rejected' ? 'status-rejected' : 'status-pending';
-                    listDiv.innerHTML += `
-                        <div class="file-item">
-                            <div>
-                                <strong>${doc.nama_file}</strong><br>
-                                <small>Upload: ${new Date(doc.uploaded_at).toLocaleString('id-ID')}</small><br>
-                                <span class="status-badge ${statusClass}">${doc.status}</span>
-                                ${doc.catatan ? '<br><small>Catatan: ' + doc.catatan + '</small>' : ''}
-                            </div>
-                            <a href="${doc.file_url}" target="_blank" class="btn-secondary">Lihat</a>
-                        </div>
-                    `;
-                });
-            }
-        });
-        
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
+// OLD loadDokumen function removed - not used anymore
 
 // Pembayaran
 async function loadPembayaran() {
@@ -267,34 +248,58 @@ document.getElementById('btn-upload-bukti').addEventListener('click', async func
     this.textContent = 'Uploading...';
     
     try {
-        // Upload file
-        const fileName = `${siswaId}_bukti_${Date.now()}_${file.name}`;
+        // Upload file ke bucket siswa-documents (pakai bucket yang sama)
+        const fileName = `pembayaran/${siswaId}_bukti_${Date.now()}_${file.name}`;
         const { data: uploadData, error: uploadError } = await window.supabaseClient.storage
-            .from('bukti-pembayaran')
+            .from('siswa-documents')
             .upload(fileName, file);
         
         if (uploadError) throw uploadError;
         
         const { data: urlData } = window.supabaseClient.storage
-            .from('bukti-pembayaran')
+            .from('siswa-documents')
             .getPublicUrl(fileName);
         
         // Update atau insert pembayaran
-        const { error: dbError } = await window.supabaseClient
+        // Cek apakah sudah ada record untuk jenis pembayaran ini
+        const { data: existingData } = await window.supabaseClient
             .from('siswa_pembayaran')
-            .upsert([{
-                ppdb_id: siswaId,
-                jenis_pembayaran: jenisPembayaran,
-                jumlah: 500000,
-                status: 'pending',
-                bukti_url: urlData.publicUrl,
-                tanggal_bayar: new Date().toISOString()
-            }]);
+            .select('id')
+            .eq('ppdb_id', siswaId)
+            .eq('jenis_pembayaran', jenisPembayaran)
+            .single();
         
-        if (dbError) throw dbError;
+        if (existingData) {
+            // Update existing record
+            const { error: dbError } = await window.supabaseClient
+                .from('siswa_pembayaran')
+                .update({
+                    status: 'pending',
+                    bukti_url: urlData.publicUrl,
+                    tanggal_bayar: new Date().toISOString()
+                })
+                .eq('id', existingData.id);
+            
+            if (dbError) throw dbError;
+        } else {
+            // Insert new record
+            const { error: dbError } = await window.supabaseClient
+                .from('siswa_pembayaran')
+                .insert([{
+                    ppdb_id: siswaId,
+                    jenis_pembayaran: jenisPembayaran,
+                    jumlah: 500000,
+                    status: 'pending',
+                    bukti_url: urlData.publicUrl,
+                    tanggal_bayar: new Date().toISOString()
+                }]);
+            
+            if (dbError) throw dbError;
+        }
         
         alert('Bukti pembayaran berhasil diupload!');
         fileInput.value = '';
+        document.getElementById('file-name-preview').textContent = '';
         document.getElementById('jenis-pembayaran').value = '';
         loadPembayaran();
         
@@ -304,6 +309,17 @@ document.getElementById('btn-upload-bukti').addEventListener('click', async func
     } finally {
         this.disabled = false;
         this.textContent = 'Upload Bukti Pembayaran';
+    }
+});
+
+// Show file name when selected
+document.getElementById('file-bukti-bayar').addEventListener('change', function() {
+    const preview = document.getElementById('file-name-preview');
+    if (this.files[0]) {
+        const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+        preview.textContent = `✅ File dipilih: ${this.files[0].name} (${fileSize} MB)`;
+    } else {
+        preview.textContent = '';
     }
 });
 
@@ -413,12 +429,23 @@ document.getElementById('file-upload-hidden').addEventListener('change', async f
     const downloadBtn = document.querySelector(`.btn-download-doc[data-doc="${currentDocType}"]`);
     const statusCell = document.getElementById(`status-${currentDocType}`);
     
+    if (!uploadBtn) {
+        alert('❌ Error: Button tidak ditemukan!');
+        return;
+    }
+    
     uploadBtn.disabled = true;
     uploadBtn.innerHTML = '<span>⏳ Uploading...</span>';
     
     try {
+        console.log('=== UPLOAD DOKUMEN ===');
+        console.log('siswa_id:', siswaId);
+        console.log('jenis_dokumen:', currentDocType);
+        console.log('file:', file.name, file.size, file.type);
+        
         // Delete old file if exists
         if (uploadedDocs[currentDocType]) {
+            console.log('Deleting old file...');
             const oldFileName = uploadedDocs[currentDocType].split('/').pop();
             await window.supabaseClient.storage
                 .from('siswa-documents')
@@ -429,35 +456,54 @@ document.getElementById('file-upload-hidden').addEventListener('change', async f
         const fileExt = file.name.split('.').pop();
         const fileName = `${siswaId}/${currentDocType}.${fileExt}`;
         
-        const { data, error } = await window.supabaseClient.storage
+        console.log('Uploading to storage:', fileName);
+        
+        const { data: uploadData, error: uploadError } = await window.supabaseClient.storage
             .from('siswa-documents')
             .upload(fileName, file, {
                 cacheControl: '3600',
                 upsert: true
             });
         
-        if (error) throw error;
+        if (uploadError) {
+            console.error('Upload error:', uploadError);
+            throw new Error('Upload ke storage gagal: ' + uploadError.message);
+        }
+        
+        console.log('Upload success:', uploadData);
         
         // Get public URL
         const { data: urlData } = window.supabaseClient.storage
             .from('siswa-documents')
             .getPublicUrl(fileName);
         
-        // Save to database
-        const { error: dbError } = await window.supabaseClient
+        console.log('Public URL:', urlData.publicUrl);
+        
+        // Save to database WITHOUT RLS check
+        console.log('Saving to database...');
+        
+        const { data: dbData, error: dbError } = await window.supabaseClient
             .from('siswa_dokumen')
             .upsert({
-                siswa_id: siswaId,
+                siswa_id: parseInt(siswaId),
                 jenis_dokumen: currentDocType,
                 nama_file: file.name,
                 file_url: urlData.publicUrl,
                 ukuran_file: file.size,
-                status: 'pending'
+                status: 'pending',
+                uploaded_at: new Date().toISOString()
             }, {
-                onConflict: 'siswa_id,jenis_dokumen'
-            });
+                onConflict: 'siswa_id,jenis_dokumen',
+                ignoreDuplicates: false
+            })
+            .select();
         
-        if (dbError) throw dbError;
+        if (dbError) {
+            console.error('Database error:', dbError);
+            throw new Error('Simpan ke database gagal: ' + dbError.message);
+        }
+        
+        console.log('Database save success:', dbData);
         
         // Update tracking
         uploadedDocs[currentDocType] = urlData.publicUrl;
@@ -468,8 +514,11 @@ document.getElementById('file-upload-hidden').addEventListener('change', async f
         alert('✅ Dokumen berhasil diupload!');
         
     } catch (error) {
+        console.error('=== UPLOAD ERROR ===');
         console.error('Error:', error);
-        alert('❌ Gagal upload dokumen: ' + error.message);
+        console.error('Error message:', error.message);
+        
+        alert('❌ Gagal upload dokumen!\n\n' + error.message + '\n\nCek Console (F12) untuk detail error.');
         
         uploadBtn.disabled = false;
         uploadBtn.innerHTML = `
