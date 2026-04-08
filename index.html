@@ -12,7 +12,7 @@
         <div class="container">
             <div class="logo">
                 <span class="logo-icon">🎓</span>
-                <span class="logo-text">SMA Negeri 1</span>
+                <span class="logo-text">SDIT Al-Madinah</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="active">Beranda</a></li>
@@ -37,6 +37,28 @@
         
         <div class="slider-dots">
             <!-- Dots will be generated dynamically -->
+        </div>
+    </section>
+
+    <!-- Profil Singkat -->
+    <section class="profil-singkat">
+        <div class="container">
+            <h2 class="section-title">Profil Singkat</h2>
+            <div class="profil-singkat-grid">
+                <div class="profil-singkat-img">
+                    <img src="img/latar.jpg" alt="Foto Sekolah" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
+                </div>
+                <div class="profil-singkat-text">
+                    <p>SDIT Al-Madinah adalah lembaga pendidikan Islam terpadu yang berkomitmen mencetak generasi yang berakhlak mulia, cerdas, dan berwawasan global.</p>
+                    <p>Para siswa tidak hanya dibekali dengan ilmu pengetahuan umum, tetapi juga dengan pendidikan agama yang kuat, pembentukan karakter, dan berbagai keterampilan untuk menghadapi tantangan masa depan.</p>
+                    <p>Dengan metode pembelajaran modern yang terintegrasi dengan nilai-nilai Islam, kami memastikan setiap siswa berkembang secara optimal dalam aspek akademik, spiritual, dan sosial.</p>
+                    <div class="profil-highlight">
+                        <h4>Mengapa Pilih Kami?</h4>
+                        <p>Kami menggali potensi dan bakat setiap siswa melalui pendekatan pendidikan yang holistik dan personal, memastikan setiap anak mendapatkan perhatian dan bimbingan terbaik.</p>
+                    </div>
+                    <a href="profil.html" class="btn-profil">Selengkapnya →</a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -72,13 +94,16 @@
         </div>
     </section>
 
-    <section class="news-section">
+    <!-- Ekstrakurikuler -->
+    <section class="ekskul-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Berita Terbaru</h2>
-                <p class="section-subtitle">Informasi dan kegiatan terkini dari SMA Negeri 1</p>
+                <h2>Ekstrakurikuler</h2>
+                <p>Kembangkan bakat dan minat siswa melalui berbagai kegiatan ekstrakurikuler unggulan</p>
             </div>
-            <div id="news-list" class="news-grid"></div>
+            <div id="ekskul-grid" class="ekskul-grid">
+                <!-- Loaded dynamically -->
+            </div>
         </div>
     </section>
 
@@ -141,13 +166,24 @@
         </div>
     </footer>
 
-    <a href="https://wa.me/6281234567890" class="whatsapp-float" target="_blank">
-        <span class="whatsapp-icon">💬</span>
+    <a href="https://wa.me/6285113253248" class="whatsapp-float" target="_blank" title="Chat WhatsApp - 085113253248">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="34" height="34" alt="WhatsApp">
     </a>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/slider.js"></script>
+    <script>
+        // Navbar transparent on top, solid on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>

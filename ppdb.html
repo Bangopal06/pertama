@@ -12,7 +12,7 @@
         <div class="container">
             <div class="logo">
                 <span class="logo-icon">🎓</span>
-                <span class="logo-text">SMA Negeri 1</span>
+                <span class="logo-text">SDIT Al-Madinah</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html">Beranda</a></li>
@@ -27,7 +27,11 @@
     </nav>
 
     <section class="page-header">
-        <h1>Penerimaan Peserta Didik Baru (PPDB)</h1>
+        <img src="img/header-ppdb.jpg" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200&q=80'" alt="Header" class="page-header-bg">
+        <div class="page-header-overlay"></div>
+        <div class="page-header-content">
+            <h1>Penerimaan Peserta Didik Baru (PPDB)</h1>
+        </div>
     </section>
 
     <section class="ppdb-section">
@@ -268,5 +272,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/db-config.js"></script>
     <script src="js/ppdb.js"></script>
+    <script>
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 80) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>
+

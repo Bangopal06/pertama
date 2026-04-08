@@ -94,3 +94,34 @@ async function loadProgram() {
 
 loadNews();
 loadProgram();
+
+async function loadEkskul() {
+    const grid = document.getElementById('ekskul-grid');
+    if (!grid) return;
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('ekskul')
+            .select('*')
+            .eq('aktif', true)
+            .order('urutan', { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            grid.innerHTML = '<p style="color:white;text-align:center;grid-column:1/-1;">Belum ada data ekskul.</p>';
+            return;
+        }
+
+        grid.innerHTML = data.map(e => `
+            <div class="ekskul-card" style="${e.gambar_url ? `background-image: url('${e.gambar_url}')` : 'background: linear-gradient(135deg,#1e3a8a,#3b82f6)'}">
+                <div class="ekskul-overlay"></div>
+                <h3>${e.nama}</h3>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error loading ekskul:', err);
+    }
+}
+
+loadEkskul();

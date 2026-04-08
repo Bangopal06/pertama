@@ -12,7 +12,7 @@
         <div class="container">
             <div class="logo">
                 <span class="logo-icon">🎓</span>
-                <span class="logo-text">SMA Negeri 1</span>
+                <span class="logo-text">SDIT Al-Madinah</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html">Beranda</a></li>
@@ -27,7 +27,11 @@
     </nav>
 
     <section class="page-header">
-        <h1>Profil Sekolah</h1>
+        <img src="img/latar.jpg" class="page-header-bg" alt="Header Profil">
+        <div class="page-header-overlay"></div>
+        <div class="page-header-content">
+            <h1>Profil Sekolah</h1>
+        </div>
     </section>
 
     <section class="content-section">
@@ -62,5 +66,17 @@
     <footer class="footer"></footer>
 
     <script src="js/footer.js"></script>
+    <script>
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 80) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>
+
+

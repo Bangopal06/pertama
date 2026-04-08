@@ -13,13 +13,20 @@ body {
 
 /* Navbar */
 .navbar {
-    background: #1e3a8a;
+    background: transparent;
     padding: 0;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 999;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: none;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.navbar.scrolled,
+.navbar.solid {
+    background: #cc0000;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.3);
 }
 
 .navbar .container {
@@ -36,13 +43,13 @@ body {
     align-items: center;
     gap: 10px;
     color: white;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
-    padding: 15px 0;
+    padding: 10px 0;
 }
 
 .logo-icon {
-    font-size: 32px;
+    font-size: 26px;
 }
 
 .nav-menu {
@@ -55,15 +62,20 @@ body {
 .nav-menu a {
     color: white;
     text-decoration: none;
-    padding: 20px 18px;
+    padding: 12px 16px;
     display: block;
     transition: all 0.3s;
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    letter-spacing: 0.3px;
 }
 
 .nav-menu a:hover,
 .nav-menu a.active {
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.2);
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 
 .btn-login {
@@ -82,9 +94,10 @@ body {
 
 /* Hero Slider */
 .hero-slider {
-    margin-top: 70px;
+    margin-top: 0;
     position: relative;
-    height: 600px;
+    height: 100vh;
+    min-height: 600px;
     overflow: hidden;
 }
 
@@ -117,7 +130,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(59, 130, 246, 0.3) 100%);
+    background: linear-gradient(135deg, #7d3e3e 0%, #ffb7b74d 100%);
 }
 
 .slide-content {
@@ -134,9 +147,12 @@ body {
 
 .slide-title {
     font-size: 32px;
-    font-weight: 300;
+    font-weight: 600;
     margin-bottom: 10px;
     animation: fadeInUp 1s ease-out;
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.5);
+    letter-spacing: 1px;
 }
 
 .slide-subtitle {
@@ -144,15 +160,18 @@ body {
     font-weight: bold;
     margin-bottom: 15px;
     color: #fbbf24;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 0 3px 12px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.6);
     animation: fadeInUp 1s ease-out 0.2s both;
+    letter-spacing: 1px;
 }
 
 .slide-description {
     font-size: 22px;
     margin-bottom: 30px;
-    font-weight: 300;
+    font-weight: 400;
     animation: fadeInUp 1s ease-out 0.4s both;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 
 .slide-buttons {
@@ -576,21 +595,62 @@ body {
 
 /* Page Header untuk halaman selain index */
 .page-header {
-    margin-top: 70px;
-    padding: 60px 20px;
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-    color: white;
+    margin-top: 0;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    width: 100%;
+}
+
+.page-header-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 0;
+    display: block;
+}
+
+.page-header-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(125,62,62,0.75) 0%, rgba(255,100,100,0.25) 100%);
+    z-index: 1;
+}
+
+.page-header-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 100%;
+    padding-top: 40px;
 }
 
 .page-header h1 {
-    font-size: 42px;
-    margin-bottom: 15px;
+    font-size: 46px;
+    margin-bottom: 10px;
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+    letter-spacing: 1px;
+    white-space: nowrap;
 }
 
 .page-header p {
     font-size: 18px;
-    color: rgba(255,255,255,0.9);
+    color: rgba(255,255,255,0.95);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 /* Content wrapper untuk halaman lain */
@@ -950,27 +1010,6 @@ body {
     background: #f8f9fa;
 }
 
-.page-header {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-    color: white;
-    padding: 80px 20px 60px;
-    text-align: center;
-    margin-top: 70px;
-}
-
-.page-header h1 {
-    font-size: 42px;
-    margin-bottom: 15px;
-    color: white;
-}
-
-.page-header p {
-    font-size: 16px;
-    opacity: 0.9;
-    max-width: 700px;
-    margin: 0 auto;
-}
-
 .contact-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1152,5 +1191,235 @@ body {
     
     .form-row {
         grid-template-columns: 1fr;
+    }
+}
+
+/* WhatsApp Float Button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: #25d366;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(37,211,102,0.5);
+    z-index: 9999;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37,211,102,0.7);
+}
+
+.whatsapp-float img {
+    width: 34px;
+    height: 34px;
+}
+
+/* Profil Singkat Section */
+.profil-singkat {
+    padding: 70px 20px;
+    background: white;
+}
+
+.profil-singkat .section-title {
+    text-align: center;
+    font-size: 32px;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.profil-singkat .section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #fbbf24;
+    margin: 12px auto 40px;
+    border-radius: 2px;
+}
+
+.profil-singkat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.profil-singkat-img {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.profil-singkat-img img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+}
+
+.profil-singkat-text p {
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.profil-highlight {
+    background: #eff6ff;
+    border-left: 4px solid #1e3a8a;
+    padding: 18px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+}
+
+.profil-highlight h4 {
+    color: #1e3a8a;
+    font-size: 16px;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.profil-highlight p {
+    margin: 0 !important;
+    font-size: 14px !important;
+    color: #555 !important;
+}
+
+.btn-profil {
+    display: inline-block;
+    margin-top: 10px;
+    background: #1e3a8a;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-profil:hover {
+    background: #cc0000;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .profil-singkat-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .profil-singkat-img img {
+        height: 250px;
+    }
+}
+
+/* Ekstrakurikuler Section */
+.ekskul-section {
+    padding: 70px 20px;
+    background: #0f172a;
+}
+
+.ekskul-section .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.ekskul-section .section-header h2 {
+    font-size: 36px;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.ekskul-section .section-header h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #fbbf24;
+    margin: 12px auto 0;
+    border-radius: 2px;
+}
+
+.ekskul-section .section-header p {
+    color: rgba(255,255,255,0.6);
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+.ekskul-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.ekskul-card {
+    position: relative;
+    height: 220px;
+    border-radius: 14px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-color: #1e3a8a;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.ekskul-card:hover {
+    transform: scale(1.04);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+}
+
+.ekskul-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+    transition: background 0.3s;
+}
+
+.ekskul-card:hover .ekskul-overlay {
+    background: linear-gradient(to top, rgba(204,0,0,0.85) 0%, rgba(0,0,0,0.2) 70%, transparent 100%);
+}
+
+.ekskul-card h3 {
+    position: relative;
+    z-index: 2;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 900px) {
+    .ekskul-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .ekskul-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .ekskul-card {
+        height: 160px;
     }
 }
