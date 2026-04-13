@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Fasilitas - Admin</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        .fasilitas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 20px; }
+        .fasilitas-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; }
+        .fasilitas-card img { width: 100%; height: 160px; object-fit: cover; display: block; }
+        .fasilitas-no-img { width: 100%; height: 160px; background: linear-gradient(135deg, #ff6b6b, #ffb3b3); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        .fasilitas-body { padding: 15px; }
+        .fasilitas-body h3 { font-size: 15px; font-weight: 600; margin: 0 0 6px; color: #1e293b; }
+        .fasilitas-body p { font-size: 13px; color: #64748b; margin: 0 0 12px; }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-left: 6px; }
+        .badge-aktif { background: #dcfce7; color: #16a34a; }
+        .badge-nonaktif { background: #fee2e2; color: #dc2626; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; border-radius: 12px; padding: 30px; width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+        .modal-box h3 { margin: 0 0 20px; font-size: 18px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+        .form-group textarea { height: 80px; resize: vertical; }
+        .upload-area { border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .upload-area:hover { border-color: #ff6b6b; background: #fff5f5; }
+        .upload-area p { margin: 0; color: #6b7280; font-size: 14px; }
+        .img-preview { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-top: 10px; display: none; }
+        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="logo">Admin Panel</div>
+            <nav class="admin-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="berita.html">Kelola Berita</a>
+                <a href="program.html">Kelola Program</a>
+                <a href="ekskul.html">Kelola Ekskul</a>
+                <a href="fasilitas.html" class="active">Kelola Fasilitas</a>
+                <a href="slider.html">Kelola Slider</a>
+                <a href="ppdb.html">Data PPDB</a>
+                <a href="siswa.html">Data Siswa</a>
+                <a href="kontak.html">Pesan Kontak</a>
+                <a href="#" id="logout">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Kelola Fasilitas</h1>
+                <button class="btn-primary" onclick="openModal()">+ Tambah Fasilitas</button>
+            </header>
+
+            <div id="fasilitas-grid" class="fasilitas-grid">
+                <p>Memuat data...</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h3 id="modal-title">Tambah Fasilitas</h3>
+            <form id="fasilitas-form">
+                <input type="hidden" id="fasilitas-id">
+                <input type="hidden" id="fasilitas-gambar-url">
+                <div class="form-group">
+                    <label>Nama Fasilitas *</label>
+                    <input type="text" id="fasilitas-nama" required placeholder="Contoh: Ruang Kelas">
+                </div>
+                <div class="form-group">
+                    <label>Icon (Emoji)</label>
+                    <input type="text" id="fasilitas-icon" placeholder="🏫" maxlength="5">
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea id="fasilitas-deskripsi" placeholder="Deskripsi singkat fasilitas..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Urutan Tampil</label>
+                    <input type="number" id="fasilitas-urutan" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="fasilitas-aktif">
+                        <option value="true">Aktif</option>
+                        <option value="false">Nonaktif</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Foto Fasilitas</label>
+                    <div class="upload-area" onclick="document.getElementById('file-fasilitas').click()">
+                        <p>📷 Klik untuk pilih foto</p>
+                        <small>JPG/PNG, max 3MB</small>
+                    </div>
+                    <input type="file" id="file-fasilitas" accept="image/*" style="display:none" onchange="previewImg(this)">
+                    <img id="img-preview" class="img-preview" alt="Preview">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn-primary" id="btn-save">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/notification.js"></script>
+    <script src="../js/admin-dashboard.js"></script>
+    <script>
+        if (!localStorage.getItem('isLoggedIn')) window.location.href = '../login.html';
+
+        async function loadFasilitas() {
+            const grid = document.getElementById('fasilitas-grid');
+            const { data, error } = await window.supabaseClient
+                .from('fasilitas').select('*').order('urutan', { ascending: true });
+
+            if (error) { grid.innerHTML = '<p style="color:red">Error: ' + error.message + '</p>'; return; }
+            if (!data.length) { grid.innerHTML = '<p>Belum ada data. Klik "+ Tambah Fasilitas".</p>'; return; }
+
+            grid.innerHTML = data.map(f => `
+                <div class="fasilitas-card">
+                    ${f.gambar_url
+                        ? `<img src="${f.gambar_url}" alt="${f.nama}" onerror="this.style.display='none'">`
+                        : `<div class="fasilitas-no-img">${f.icon || '🏫'}</div>`
+                    }
+                    <div class="fasilitas-body">
+                        <h3>${f.icon || ''} ${f.nama} <span class="badge ${f.aktif ? 'badge-aktif' : 'badge-nonaktif'}">${f.aktif ? 'Aktif' : 'Nonaktif'}</span></h3>
+                        <p>${f.deskripsi || '-'}</p>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-primary" onclick="editFasilitas(${f.id})" style="padding:6px 16px; font-size:13px;">Edit</button>
+                            <button class="btn-danger" onclick="deleteFasilitas(${f.id}, '${f.nama.replace(/'/g, "\\'")}')" style="padding:6px 16px; font-size:13px;">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(reset = true) {
+            if (reset) {
+                document.getElementById('modal-title').textContent = 'Tambah Fasilitas';
+                document.getElementById('fasilitas-form').reset();
+                document.getElementById('fasilitas-id').value = '';
+                document.getElementById('fasilitas-gambar-url').value = '';
+                document.getElementById('img-preview').style.display = 'none';
+            }
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+        function previewImg(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById('img-preview');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function editFasilitas(id) {
+            const { data, error } = await window.supabaseClient.from('fasilitas').select('*').eq('id', id).single();
+            if (error) return;
+            document.getElementById('modal-title').textContent = 'Edit Fasilitas';
+            document.getElementById('fasilitas-id').value = data.id;
+            document.getElementById('fasilitas-nama').value = data.nama;
+            document.getElementById('fasilitas-icon').value = data.icon || '';
+            document.getElementById('fasilitas-deskripsi').value = data.deskripsi || '';
+            document.getElementById('fasilitas-urutan').value = data.urutan || 0;
+            document.getElementById('fasilitas-aktif').value = String(data.aktif);
+            document.getElementById('fasilitas-gambar-url').value = data.gambar_url || '';
+            const img = document.getElementById('img-preview');
+            if (data.gambar_url) { img.src = data.gambar_url; img.style.display = 'block'; }
+            else { img.style.display = 'none'; }
+            openModal(false);
+        }
+
+        document.getElementById('fasilitas-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save');
+            btn.disabled = true; btn.textContent = 'Menyimpan...';
+            try {
+                const id = document.getElementById('fasilitas-id').value;
+                const fileInput = document.getElementById('file-fasilitas');
+                let gambarUrl = document.getElementById('fasilitas-gambar-url').value;
+
+                if (fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    if (file.size > 3 * 1024 * 1024) throw new Error('Foto maksimal 3MB');
+                    const ext = file.name.split('.').pop();
+                    const fileName = `fasilitas_${Date.now()}.${ext}`;
+                    const { error: upErr } = await window.supabaseClient.storage
+                        .from('program-images').upload(fileName, file, { upsert: true });
+                    if (upErr) throw upErr;
+                    const { data: urlData } = window.supabaseClient.storage.from('program-images').getPublicUrl(fileName);
+                    gambarUrl = urlData.publicUrl;
+                }
+
+                const payload = {
+                    nama: document.getElementById('fasilitas-nama').value,
+                    icon: document.getElementById('fasilitas-icon').value || '🏫',
+                    deskripsi: document.getElementById('fasilitas-deskripsi').value,
+                    urutan: parseInt(document.getElementById('fasilitas-urutan').value) || 0,
+                    aktif: document.getElementById('fasilitas-aktif').value === 'true',
+                    gambar_url: gambarUrl || null
+                };
+
+                if (id) {
+                    const { error } = await window.supabaseClient.from('fasilitas').update(payload).eq('id', id);
+                    if (error) throw error;
+                    showNotification('Fasilitas berhasil diupdate!', 'success');
+                } else {
+                    const { error } = await window.supabaseClient.from('fasilitas').insert([payload]);
+                    if (error) throw error;
+                    showNotification('Fasilitas berhasil ditambahkan!', 'success');
+                }
+                closeModal(); loadFasilitas();
+            } catch (err) {
+                showNotification('Gagal: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Simpan';
+            }
+        });
+
+        async function deleteFasilitas(id, nama) {
+            if (!confirm(`Hapus fasilitas "${nama}"?`)) return;
+            const { error } = await window.supabaseClient.from('fasilitas').delete().eq('id', id);
+            if (error) { showNotification('Gagal menghapus', 'error'); return; }
+            showNotification('Fasilitas berhasil dihapus!', 'success');
+            loadFasilitas();
+        }
+
+        loadFasilitas();
+    </script>
+</body>
+</html>

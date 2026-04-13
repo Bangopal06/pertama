@@ -14,6 +14,9 @@
                 <span class="logo-icon">🎓</span>
                 <span class="logo-text">SDIT Al-Madinah</span>
             </div>
+            <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
             <ul class="nav-menu">
                 <li><a href="index.html">Beranda</a></li>
                 <li><a href="profil.html" class="active">Profil</a></li>
@@ -36,47 +39,114 @@
 
     <section class="content-section">
         <div class="container">
-            <div class="profile-content">
-                <h2>Tentang SMA Negeri 1</h2>
-                <p>SMA Negeri 1 adalah lembaga pendidikan menengah atas yang berkomitmen untuk menghasilkan lulusan berkualitas dengan karakter yang kuat dan wawasan global.</p>
-                
-                <h3>Visi</h3>
-                <p>Menjadi sekolah unggulan yang menghasilkan lulusan berkualitas, berakhlak mulia, dan berwawasan global pada tahun 2030.</p>
-                
-                <h3>Misi</h3>
-                <ul>
-                    <li>Menyelenggarakan pendidikan berkualitas dengan standar nasional dan internasional</li>
-                    <li>Mengintegrasikan teknologi dalam proses pembelajaran</li>
-                    <li>Membentuk karakter siswa yang berakhlak mulia</li>
-                    <li>Mengembangkan potensi siswa di bidang akademik dan non-akademik</li>
-                </ul>
 
-                <h3>Fasilitas</h3>
-                <ul>
-                    <li>Ruang kelas ber-AC dan multimedia</li>
-                    <li>Laboratorium IPA, Komputer, dan Bahasa</li>
-                    <li>Perpustakaan digital</li>
-                    <li>Lapangan olahraga</li>
-                    <li>Aula serbaguna</li>
-                </ul>
+            <!-- Tentang & Visi Misi -->
+            <div class="profil-about animate-on-scroll">
+                <div class="profil-about-text">
+                    <h2>Tentang SDIT Al-Madinah</h2>
+                    <p>SDIT Al-Madinah adalah lembaga pendidikan Islam terpadu yang berkomitmen mencetak generasi berakhlak mulia, cerdas, dan berwawasan global.</p>
+                    <div class="visi-misi-grid">
+                        <div class="visi-box">
+                            <h4>🎯 Visi</h4>
+                            <p>Menjadi sekolah unggulan yang menghasilkan lulusan berkualitas, berakhlak mulia, dan berwawasan global.</p>
+                        </div>
+                        <div class="misi-box">
+                            <h4>📋 Misi</h4>
+                            <ul>
+                                <li>Menyelenggarakan pendidikan berkualitas</li>
+                                <li>Mengintegrasikan teknologi dalam pembelajaran</li>
+                                <li>Membentuk karakter siswa berakhlak mulia</li>
+                                <li>Mengembangkan potensi akademik & non-akademik</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="profil-about-img">
+                    <img src="img/latar.jpg" alt="Tentang Sekolah" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
+                </div>
             </div>
+
+            <!-- Sejarah Sekolah -->
+            <div class="sejarah-section animate-on-scroll">
+                <h2 class="section-title-profil">Sejarah Sekolah</h2>
+                <div class="sejarah-grid">
+                    <div class="sejarah-img">
+                        <img src="img/sejarah.jpg" alt="Sejarah Sekolah" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
+                    </div>
+                    <div class="sejarah-text">
+                        <p>SDIT Al-Madinah didirikan dengan semangat untuk memberikan pendidikan Islam terpadu yang berkualitas bagi generasi penerus bangsa.</p>
+                        <p>Sejak berdiri, sekolah ini telah berkembang pesat dan menjadi salah satu lembaga pendidikan Islam terpercaya di wilayahnya, dengan ribuan alumni yang telah berhasil di berbagai bidang.</p>
+                        <p>Dengan kurikulum yang memadukan ilmu umum dan ilmu agama, SDIT Al-Madinah terus berinovasi dalam metode pembelajaran untuk menghasilkan generasi yang unggul dan berakhlak mulia.</p>
+                        <div class="sejarah-stats">
+                            <div class="stat-item">
+                                <span class="stat-num">10+</span>
+                                <span class="stat-label">Tahun Berdiri</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-num">500+</span>
+                                <span class="stat-label">Siswa Aktif</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-num">50+</span>
+                                <span class="stat-label">Tenaga Pendidik</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sarana & Prasarana -->
+            <div class="fasilitas-section animate-on-scroll">
+                <h2 class="section-title-profil">Sarana & Prasarana</h2>
+                <p class="section-subtitle-profil">Fasilitas lengkap untuk mendukung proses belajar mengajar yang optimal</p>
+                <div id="fasilitas-grid" class="fasilitas-grid">
+                    <p style="color:#999;">Memuat data fasilitas...</p>
+                </div>
+            </div>
+
         </div>
     </section>
 
     <footer class="footer"></footer>
 
     <script src="js/footer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
     <script>
+        async function loadFasilitas() {
+            const grid = document.getElementById('fasilitas-grid');
+            const { data, error } = await window.supabaseClient
+                .from('fasilitas').select('*').eq('aktif', true).order('urutan', { ascending: true });
+            if (error || !data.length) {
+                grid.innerHTML = '<p style="color:#999;">Belum ada data fasilitas.</p>';
+                return;
+            }
+            grid.innerHTML = data.map(f => `
+                <div class="fasilitas-card">
+                    <div class="fasilitas-img">
+                        ${f.gambar_url
+                            ? `<img src="${f.gambar_url}" alt="${f.nama}" onerror="this.parentElement.innerHTML='<div style=\'height:180px;background:linear-gradient(135deg,#ff6b6b,#ffb3b3);display:flex;align-items:center;justify-content:center;font-size:48px\'>${f.icon || '🏫'}</div>'">`
+                            : `<div style="height:180px;background:linear-gradient(135deg,#ff6b6b,#ffb3b3);display:flex;align-items:center;justify-content:center;font-size:48px">${f.icon || '🏫'}</div>`
+                        }
+                    </div>
+                    <div class="fasilitas-body">
+                        <h4>${f.icon || ''} ${f.nama}</h4>
+                        <p>${f.deskripsi || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 80) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+            if (window.scrollY > 80) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
         });
+
+        loadFasilitas();
     </script>
 </body>
 </html>
+
 
 
