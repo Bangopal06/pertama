@@ -24,7 +24,7 @@ const footerHTML = `
                 </div>
                 <div class="footer-col">
                     <h3>Alamat</h3>
-                    <p>Jl. Pengasinan Raya No 50, Rawa Lumbu, Bekasi Timur, Jawa Barat, Indonesia</p>
+                    <p>Jl. Tentara Pelajar No.48, Kutosari, Kec. Kebumen, Kabupaten Kebumen, Jawa Tengah 54317</p>
                 </div>
             </div>
 
