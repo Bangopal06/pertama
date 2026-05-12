@@ -1,0 +1,9 @@
+# API Keys - jangan di-push ke GitHub
+js/chatbot.js
+
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
