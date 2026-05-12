@@ -1,5 +1,6 @@
 async function loadNews() {
     const newsContainer = document.getElementById('news-list');
+    if (!newsContainer) return; // Elemen tidak ada, skip
     
     // Tampilkan loading
     newsContainer.innerHTML = `
@@ -53,6 +54,7 @@ async function loadNews() {
 
 async function loadProgram() {
     const programContainer = document.getElementById('program-grid');
+    if (!programContainer) return; // Elemen tidak ada, skip
     
     // Tampilkan loading
     programContainer.innerHTML = `
@@ -119,6 +121,16 @@ async function loadEkskul() {
                 <h3>${e.nama}</h3>
             </div>
         `).join('');
+
+        // Set kolom berdasarkan jumlah item
+        const total = data.length;
+        let cols;
+        if (total <= 4) cols = total;
+        else if (total <= 6) cols = 3;
+        else if (total <= 8) cols = 4;
+        else if (total <= 10) cols = 5;
+        else cols = Math.ceil(total / 2);
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     } catch (err) {
         console.error('Error loading ekskul:', err);
     }

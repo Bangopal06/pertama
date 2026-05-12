@@ -1,15 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="../img/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - SMA Negeri 1</title>
+    <title>Dashboard Admin - SDIT Al-Madinah</title>
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
     <div class="admin-layout">
         <aside class="sidebar">
-            <div class="logo">Admin Panel</div>
+            <div class="logo"><img src="../img/logo.png" style="width:30px;height:30px;object-fit:contain;vertical-align:middle;margin-right:8px;">SDIT Al-Madinah</div>
             <nav class="admin-nav">
                 <a href="dashboard.html" class="active">Dashboard</a>
                 <a href="berita.html">Kelola Berita</a>
@@ -26,19 +27,73 @@
         <main class="main-content">
             <header class="content-header">
                 <h1>Dashboard</h1>
+                <span id="admin-name" style="color:#666; font-size:14px;"></span>
             </header>
+
+            <!-- Stats Cards -->
             <div class="dashboard-stats">
-                <div class="stat-card">
+                <div class="stat-card" style="border-left: 4px solid #3b82f6;">
                     <h3>Total Berita</h3>
-                    <p class="stat-number" id="total-berita">0</p>
+                    <p class="stat-number" id="total-berita" style="color:#3b82f6;">0</p>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" style="border-left: 4px solid #10b981;">
                     <h3>Pendaftar PPDB</h3>
-                    <p class="stat-number" id="total-ppdb">0</p>
+                    <p class="stat-number" id="total-ppdb" style="color:#10b981;">0</p>
                 </div>
-                <div class="stat-card">
-                    <h3>Berita Hari Ini</h3>
-                    <p class="stat-number" id="berita-hari-ini">0</p>
+                <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+                    <h3>Pesan Kontak</h3>
+                    <p class="stat-number" id="total-kontak" style="color:#f59e0b;">0</p>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #8b5cf6;">
+                    <h3>Total Program</h3>
+                    <p class="stat-number" id="total-program" style="color:#8b5cf6;">0</p>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #ff6b6b;">
+                    <h3>Total Ekskul</h3>
+                    <p class="stat-number" id="total-ekskul" style="color:#ff6b6b;">0</p>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #06b6d4;">
+                    <h3>Total Fasilitas</h3>
+                    <p class="stat-number" id="total-fasilitas" style="color:#06b6d4;">0</p>
+                </div>
+            </div>
+
+            <!-- Quick Access -->
+            <div style="margin-top: 30px;">
+                <h2 style="font-size:18px; color:#374151; margin-bottom:15px;">Akses Cepat</h2>
+                <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:15px;">
+                    <a href="berita.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">📰</div>
+                        <div style="font-size:13px; font-weight:600;">Kelola Berita</div>
+                    </a>
+                    <a href="program.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">📚</div>
+                        <div style="font-size:13px; font-weight:600;">Kelola Program</div>
+                    </a>
+                    <a href="ekskul.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">🏃</div>
+                        <div style="font-size:13px; font-weight:600;">Kelola Ekskul</div>
+                    </a>
+                    <a href="fasilitas.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">🏫</div>
+                        <div style="font-size:13px; font-weight:600;">Kelola Fasilitas</div>
+                    </a>
+                    <a href="slider.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">🖼️</div>
+                        <div style="font-size:13px; font-weight:600;">Kelola Slider</div>
+                    </a>
+                    <a href="ppdb.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">📋</div>
+                        <div style="font-size:13px; font-weight:600;">Data PPDB</div>
+                    </a>
+                    <a href="siswa.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">👨‍🎓</div>
+                        <div style="font-size:13px; font-weight:600;">Data Siswa</div>
+                    </a>
+                    <a href="kontak.html" style="background:white; padding:20px; border-radius:10px; text-align:center; text-decoration:none; color:#374151; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="font-size:32px; margin-bottom:8px;">✉️</div>
+                        <div style="font-size:13px; font-weight:600;">Pesan Kontak</div>
+                    </a>
                 </div>
             </div>
         </main>
@@ -48,4 +103,5 @@
     <script src="../js/admin-dashboard.js"></script>
 </body>
 </html>
+
 

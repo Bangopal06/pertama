@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="img/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SDIT Al-Madinah</title>
     <link rel="stylesheet" href="css/style.css">
@@ -11,7 +12,7 @@
     <nav class="navbar">
         <div class="container">
             <div class="logo">
-                <span class="logo-icon">🎓</span>
+                <img src="img/logo.png" alt="Logo" style="width:40px;height:40px;object-fit:contain;">
                 <span class="logo-text">SDIT Al-Madinah</span>
             </div>
             <button class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -49,7 +50,7 @@
             <h2 class="section-title">Profil Singkat</h2>
             <div class="profil-singkat-grid">
                 <div class="profil-singkat-img">
-                    <img src="img/latar.jpg" alt="Foto Sekolah" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
+                    <img src="img/profil.JPG" alt="Foto Sekolah" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
                 </div>
                 <div class="profil-singkat-text">
                     <p>SDIT Al-Madinah adalah lembaga pendidikan Islam terpadu yang berkomitmen mencetak generasi yang berakhlak mulia, cerdas, dan berwawasan global.</p>
@@ -150,7 +151,12 @@
 
         document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
     </script>
+    <script src="js/chatbot.js"></script>
 </body>
 </html>
+
+
+
+
 
 
