@@ -42,8 +42,14 @@ async function loadBeritaDetail() {
             document.getElementById('article-image').style.display = 'none';
         }
         
-        // Format konten dengan paragraf
-        const kontenFormatted = data.konten.split('\n').map(p => `<p>${p}</p>`).join('');
+        // Format konten dengan paragraf dan foto
+        const kontenFormatted = data.konten.split('\n').map(p => {
+            const fotoMatch = p.match(/^\[foto:(.*?)\]$/);
+            if (fotoMatch) {
+                return `<div style="margin:20px 0; text-align:center;"><img src="${fotoMatch[1]}" alt="Foto" style="max-width:100%; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1);"></div>`;
+            }
+            return p ? `<p>${p}</p>` : '';
+        }).join('');
         document.getElementById('article-content').innerHTML = kontenFormatted;
         
         // Setup share buttons

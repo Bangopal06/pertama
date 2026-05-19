@@ -71,7 +71,25 @@
                     </div>
                     <div class="form-group">
                         <label>Konten</label>
-                        <textarea id="konten" rows="6" required></textarea>
+                        <div style="border:1px solid #ddd; border-radius:6px; overflow:hidden;">
+                            <!-- Toolbar -->
+                            <div style="background:#f8f9fa; padding:8px 12px; border-bottom:1px solid #ddd; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                <span style="font-size:13px; color:#666; font-weight:500;">Insert:</span>
+                                <button type="button" onclick="insertFotoKonten()" style="background:#ff6b6b; color:white; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:5px;">
+                                    📷 Foto
+                                </button>
+                                <span style="font-size:11px; color:#999;">Klik untuk sisipkan foto di dalam konten</span>
+                            </div>
+                            <textarea id="konten" rows="8" required style="border:none; border-radius:0; width:100%; box-sizing:border-box; padding:12px; font-size:14px; resize:vertical; outline:none;"></textarea>
+                        </div>
+                        <!-- Hidden input untuk upload foto konten -->
+                        <input type="file" id="foto-konten-input" accept="image/*" style="display:none" onchange="uploadFotoKonten(this)">
+                        <div id="foto-konten-progress" style="display:none; margin-top:8px;">
+                            <div style="background:#e0e0e0; border-radius:5px; overflow:hidden;">
+                                <div id="foto-konten-bar" style="background:#ff6b6b; height:6px; width:0%; transition:width 0.3s;"></div>
+                            </div>
+                            <small style="color:#666;">Mengupload foto...</small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Kategori</label>

@@ -195,7 +195,24 @@ async function sendMessage() {
     } catch (error) {
         document.getElementById('typing')?.remove();
         console.error('Chatbot error:', error);
-        addMessage('Maaf, terjadi kesalahan. Silakan hubungi kami di WhatsApp: 085113253248', false);
+
+        // Fallback ke rule-based jika API error
+        const lower = text.toLowerCase();
+        let fallback = '';
+        if (lower.includes('ppdb') || lower.includes('daftar')) {
+            fallback = 'Pendaftaran PPDB 2025/2026:\n• 1 Juni - 30 Juni 2025\n• Biaya: Rp 500.000\n• Dokumen: KK, Akta, Ijazah, Foto 3x4\n\nInfo: 085113253248';
+        } else if (lower.includes('ekskul')) {
+            fallback = 'Ekstrakurikuler: Karate, Tilawah, Kaligrafi, Pencak Silat, Robotik & IT, Renang, Kriya, Pramuka\n\nInfo: 085113253248';
+        } else if (lower.includes('fasilitas')) {
+            fallback = 'Fasilitas: Ruang Kelas AC, Lab IPA/Komputer, Perpustakaan, Lapangan, Masjid, Aula\n\nInfo: 085113253248';
+        } else if (lower.includes('lokasi') || lower.includes('alamat')) {
+            fallback = 'Alamat: Jl. Tentara Pelajar No.48, Kutosari, Kebumen, Jawa Tengah 54317\n\nWhatsApp: 085113253248';
+        } else if (lower.includes('kontak') || lower.includes('hubungi')) {
+            fallback = 'Kontak:\n📞 WA: 085113253248\n📧 info@sdit-almadinah.sch.id\n📸 @sditalmadinahkebumen\n⏰ Senin-Jumat 08.00-17.00';
+        } else {
+            fallback = 'Maaf, saya sedang mengalami gangguan. Silakan hubungi kami:\n📞 WhatsApp: 085113253248\n⏰ Senin-Jumat, 08.00-17.00 WIB';
+        }
+        addMessage(fallback, false);
     } finally {
         sendBtn.disabled = false;
         input.focus();

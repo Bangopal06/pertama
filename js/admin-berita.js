@@ -371,3 +371,71 @@ async function deleteBerita(id) {
 }
 
 loadBerita();
+
+// ============================================
+// UPLOAD FOTO DI DALAM KONTEN BERITA
+// ============================================
+
+function insertFotoKonten() {
+    document.getElementById('foto-konten-input').click();
+}
+
+async function uploadFotoKonten(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+        showNotification('Ukuran foto maksimal 5MB!', 'error');
+        input.value = '';
+        return;
+    }
+
+    const progress = document.getElementById('foto-konten-progress');
+    const bar = document.getElementById('foto-konten-bar');
+    progress.style.display = 'block';
+    bar.style.width = '30%';
+
+    try {
+        const ext = file.name.split('.').pop();
+        const fileName = `konten_${Date.now()}.${ext}`;
+
+        bar.style.width = '60%';
+
+        const { data, error } = await window.supabaseClient.storage
+            .from('berita-images')
+            .upload(fileName, file, { upsert: true });
+
+        if (error) throw error;
+
+        bar.style.width = '90%';
+
+        const { data: urlData } = window.supabaseClient.storage
+            .from('berita-images')
+            .getPublicUrl(fileName);
+
+        // Sisipkan tag gambar ke dalam konten
+        const kontenEl = document.getElementById('konten');
+        const pos = kontenEl.selectionStart;
+        const before = kontenEl.value.substring(0, pos);
+        const after = kontenEl.value.substring(pos);
+        const imgTag = `\n[foto:${urlData.publicUrl}]\n`;
+        kontenEl.value = before + imgTag + after;
+        kontenEl.focus();
+        kontenEl.selectionStart = pos + imgTag.length;
+        kontenEl.selectionEnd = pos + imgTag.length;
+
+        bar.style.width = '100%';
+        showNotification('Foto berhasil disisipkan ke konten!', 'success');
+
+        setTimeout(() => {
+            progress.style.display = 'none';
+            bar.style.width = '0%';
+        }, 1000);
+
+    } catch (error) {
+        progress.style.display = 'none';
+        showNotification('Gagal upload foto: ' + error.message, 'error');
+    }
+
+    input.value = '';
+}
