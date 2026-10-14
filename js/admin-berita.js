@@ -19,7 +19,7 @@ document.getElementById('btn-tambah').addEventListener('click', function() {
     document.getElementById('form-berita').style.display = 'block';
     document.getElementById('form-title').textContent = 'Tambah Berita Baru';
     document.getElementById('berita-form').reset();
-    document.getElementById('preview-img').style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
+    document.getElementById('preview-img').style.display = 'none'
     document.getElementById('upload-progress').style.display = 'none';
     document.getElementById('file-upload-section').style.display = 'block';
     document.getElementById('url-input-section').style.display = 'none';
@@ -30,7 +30,7 @@ document.getElementById('btn-tambah').addEventListener('click', function() {
 document.getElementById('btn-batal').addEventListener('click', function() {
     document.getElementById('form-berita').style.display = 'none';
     document.getElementById('berita-form').reset();
-    document.getElementById('preview-img').style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
+    document.getElementById('preview-img').style.display = 'none'
     document.getElementById('upload-progress').style.display = 'none';
     currentImageUrl = null;
     editingId = null;
@@ -63,9 +63,9 @@ document.getElementById('gambar_url').addEventListener('input', function(e) {
     
     if (url) {
         preview.src = url;
-        preview.style.display = 'block'; document.getElementById('crop-container').style.display = 'none';
+        preview.style.display = 'block'
         preview.onerror = function() {
-            preview.style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
+            preview.style.display = 'none'
             alert('URL gambar tidak valid atau tidak bisa diakses');
         };
         preview.onload = function() {
@@ -102,7 +102,7 @@ document.getElementById('gambar_file').addEventListener('change', function(e) {
         const reader = new FileReader();
         reader.onload = function(event) {
             preview.src = event.target.result;
-            preview.style.display = 'block'; document.getElementById('crop-container').style.display = 'none';
+            preview.style.display = 'block'
             if (typeof initCrop === 'function') initCrop(event.target.result);
         };
         reader.readAsDataURL(file);
@@ -191,7 +191,7 @@ document.getElementById('berita-form').addEventListener('submit', async function
         
         document.getElementById('form-berita').style.display = 'none';
         document.getElementById('berita-form').reset();
-        document.getElementById('preview-img').style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
+        document.getElementById('preview-img').style.display = 'none'
         document.getElementById('upload-progress').style.display = 'none';
         currentImageUrl = null;
         editingId = null;
@@ -352,7 +352,7 @@ async function editBerita(id) {
                     initCrop(item.gambar_url);
                 } else {
                     preview.src = item.gambar_url;
-                    preview.style.display = 'block'; document.getElementById('crop-container').style.display = 'none';
+                    preview.style.display = 'block'
                 }
             }
             

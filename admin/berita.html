@@ -147,29 +147,30 @@
     <script src="../js/admin-notifikasi.js"></script>
     <script>
     // ===== CROP INTERAKTIF =====
-    const CARD_RATIO = 260 / 400; // tinggi/lebar card di frontend
+    const CARD_RATIO = 260 / 400;
 
     function initCrop(imgSrc) {
         const container = document.getElementById('crop-container');
-        const wrapper   = document.getElementById('crop-wrapper');
         const img       = document.getElementById('preview-img');
         const cropBox   = document.getElementById('crop-box');
         const darkTop   = document.getElementById('crop-dark-top');
         const darkBot   = document.getElementById('crop-dark-bottom');
         const posLabel  = document.getElementById('posisi-label');
         const posInput  = document.getElementById('foto_posisi');
-        const fallback  = document.getElementById('preview-img-fallback');
 
-        fallback.style.display = 'none';
+        // Set src hanya jika berbeda untuk hindari loop
+        if (img.getAttribute('src') !== imgSrc) {
+            img._fromCrop = true;
+            img.src = imgSrc;
+        }
         container.style.display = 'block';
-        img.src = imgSrc;
 
-        img.onload = () => {
+        function setup() {
             const W = img.offsetWidth;
             const H = img.offsetHeight;
-            const boxH = Math.round(W * CARD_RATIO); // tinggi kotak crop
+            if (!W || !H) return;
 
-            // Posisi awal dari saved value atau 50%
+            const boxH = Math.round(W * CARD_RATIO);
             const savedPct = parseFloat(posInput.value) || 50;
             let topPx = Math.max(0, Math.min((savedPct / 100) * H - boxH / 2, H - boxH));
 
@@ -180,57 +181,28 @@
                 cropBox.style.top    = topPx + 'px';
                 cropBox.style.height = boxH + 'px';
                 darkTop.style.height = topPx + 'px';
-                darkBot.style.height = (H - topPx - boxH) + 'px';
+                darkBot.style.top    = (topPx + boxH) + 'px';
                 darkBot.style.bottom = '0';
-                darkBot.style.top    = 'auto';
+                darkBot.style.height = 'auto';
             }
             update();
 
-            // Drag
             let dragging = false, startY = 0, startTop = 0;
-            cropBox.addEventListener('mousedown', e => {
-                dragging = true; startY = e.clientY; startTop = topPx;
-                e.preventDefault();
-            });
-            document.addEventListener('mousemove', e => {
-                if (!dragging) return;
-                topPx = Math.max(0, Math.min(startTop + (e.clientY - startY), H - boxH));
-                update();
-            });
-            document.addEventListener('mouseup', () => dragging = false);
+            cropBox.onmousedown = e => { dragging = true; startY = e.clientY; startTop = topPx; e.preventDefault(); };
+            document.onmousemove = e => { if (!dragging) return; topPx = Math.max(0, Math.min(startTop + (e.clientY - startY), H - boxH)); update(); };
+            document.onmouseup = () => { dragging = false; };
 
-            // Touch
-            cropBox.addEventListener('touchstart', e => {
-                dragging = true; startY = e.touches[0].clientY; startTop = topPx;
-            }, {passive:true});
-            document.addEventListener('touchmove', e => {
-                if (!dragging) return;
-                topPx = Math.max(0, Math.min(startTop + (e.touches[0].clientY - startY), H - boxH));
-                update();
-            }, {passive:true});
-            document.addEventListener('touchend', () => dragging = false);
-        };
+            cropBox.ontouchstart = e => { dragging = true; startY = e.touches[0].clientY; startTop = topPx; };
+            document.ontouchmove = e => { if (!dragging) return; topPx = Math.max(0, Math.min(startTop + (e.touches[0].clientY - startY), H - boxH)); update(); };
+            document.ontouchend = () => { dragging = false; };
+        }
+
+        if (img.complete && img.naturalHeight) {
+            setup();
+        } else {
+            img.onload = setup;
+        }
     }
-
-    // Panggil initCrop setiap kali preview berubah
-    const origPreview = window.showPreview;
-    function triggerCrop(src) {
-        if (src) initCrop(src);
-    }
-
-    // Hook ke perubahan gambar — observe src preview-img
-    const obs = new MutationObserver(muts => {
-        muts.forEach(m => {
-            if (m.attributeName === 'src') {
-                const src = document.getElementById('preview-img').src;
-                if (src && src !== window.location.href) initCrop(src);
-            }
-        });
-    });
-    // Observer akan dipasang setelah DOM ready
-    document.addEventListener('DOMContentLoaded', () => {
-        obs.observe(document.getElementById('preview-img'), { attributes: true });
-    });
     </script>
 </body>
 </html>
