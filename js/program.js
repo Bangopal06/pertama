@@ -6,7 +6,6 @@ async function loadProgramDetail() {
         return;
     }
     
-    // Cek apakah Supabase client tersedia
     if (!window.supabaseClient) {
         console.log('Supabase client tidak tersedia, menggunakan data default');
         loadDefaultProgramDetail();
@@ -20,22 +19,18 @@ async function loadProgramDetail() {
             .eq('aktif', true)
             .order('urutan', { ascending: true});
         
-        // Jika ada error (termasuk tabel tidak ada), gunakan data default
         if (error) {
             console.log('Error dari database, menggunakan data default:', error.message);
             loadDefaultProgramDetail();
             return;
         }
         
-        // Jika tidak ada data, gunakan data default
         if (!program || program.length === 0) {
             console.log('Tidak ada data program, menggunakan data default');
             loadDefaultProgramDetail();
             return;
         }
         
-        // Tampilkan data dari database
-        console.log('Menampilkan', program.length, 'program dari database');
         container.innerHTML = program.map(p => `
             <div class="program-detail-card">
                 <img src="${p.gambar_url || 'https://via.placeholder.com/600x400?text=Program'}" alt="${p.judul}">
@@ -60,12 +55,7 @@ async function loadProgramDetail() {
 function loadDefaultProgramDetail() {
     const container = document.getElementById('program-detail-grid');
     
-    if (!container) {
-        console.error('Container tidak ditemukan');
-        return;
-    }
-    
-    console.log('Menampilkan data program default');
+    if (!container) return;
     
     const defaultProgram = [
         {
@@ -115,7 +105,6 @@ function loadDefaultProgramDetail() {
     `).join('');
 }
 
-// Tunggu DOM ready sebelum load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadProgramDetail);
 } else {

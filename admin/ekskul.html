@@ -134,8 +134,6 @@
                 <a href="ekskul.html" class="active">Kelola Ekskul</a>
                 <a href="fasilitas.html">Kelola Fasilitas</a>
                 <a href="slider.html">Kelola Slider</a>
-                <a href="ppdb.html">Data PPDB</a>
-                <a href="siswa.html">Data Siswa</a>
                 <a href="kontak.html">Pesan Kontak</a>
                 <a href="#" id="logout">Logout</a>
             </nav>
@@ -160,6 +158,7 @@
             <form id="ekskul-form">
                 <input type="hidden" id="ekskul-id">
                 <input type="hidden" id="ekskul-gambar-url">
+                <input type="hidden" id="ekskul-gambar2-url">
 
                 <div class="form-group">
                     <label>Nama Ekstrakurikuler *</label>
@@ -181,13 +180,22 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Foto Ekskul</label>
+                    <label>Foto Ekskul 1</label>
                     <div class="upload-area" onclick="document.getElementById('file-ekskul').click()">
-                        <p>📷 Klik untuk pilih foto</p>
+                        <p>📷 Klik untuk pilih foto utama</p>
                         <small>JPG/PNG, max 3MB</small>
                     </div>
-                    <input type="file" id="file-ekskul" accept="image/*" style="display:none" onchange="previewImg(this)">
+                    <input type="file" id="file-ekskul" accept="image/*" style="display:none" onchange="previewImg(this,'img-preview')">
                     <img id="img-preview" class="img-preview" alt="Preview">
+                </div>
+                <div class="form-group">
+                    <label>Foto Ekskul 2 <span style="color:#9ca3af;font-weight:400;font-size:12px;">(opsional — tampil saat hover)</span></label>
+                    <div class="upload-area" onclick="document.getElementById('file-ekskul2').click()">
+                        <p>📷 Klik untuk pilih foto kedua</p>
+                        <small>JPG/PNG, max 3MB</small>
+                    </div>
+                    <input type="file" id="file-ekskul2" accept="image/*" style="display:none" onchange="previewImg(this,'img-preview2')">
+                    <img id="img-preview2" class="img-preview" alt="Preview 2">
                 </div>
 
                 <div class="modal-footer">
@@ -239,7 +247,9 @@
                 document.getElementById('ekskul-form').reset();
                 document.getElementById('ekskul-id').value = '';
                 document.getElementById('ekskul-gambar-url').value = '';
+                document.getElementById('ekskul-gambar2-url').value = '';
                 document.getElementById('img-preview').style.display = 'none';
+                document.getElementById('img-preview2').style.display = 'none';
             }
             document.getElementById('modal').classList.add('active');
         }
@@ -248,12 +258,12 @@
             document.getElementById('modal').classList.remove('active');
         }
 
-        function previewImg(input) {
+        function previewImg(input, previewId) {
             const file = input.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = e => {
-                const img = document.getElementById('img-preview');
+                const img = document.getElementById(previewId);
                 img.src = e.target.result;
                 img.style.display = 'block';
             };
@@ -271,10 +281,14 @@
             document.getElementById('ekskul-urutan').value = data.urutan || 0;
             document.getElementById('ekskul-aktif').value = String(data.aktif);
             document.getElementById('ekskul-gambar-url').value = data.gambar_url || '';
+            document.getElementById('ekskul-gambar2-url').value = data.gambar2_url || '';
 
             const img = document.getElementById('img-preview');
             if (data.gambar_url) { img.src = data.gambar_url; img.style.display = 'block'; }
             else { img.style.display = 'none'; }
+            const img2 = document.getElementById('img-preview2');
+            if (data.gambar2_url) { img2.src = data.gambar2_url; img2.style.display = 'block'; }
+            else { img2.style.display = 'none'; }
 
             openModal(false);
         }
@@ -288,26 +302,34 @@
             try {
                 const id = document.getElementById('ekskul-id').value;
                 const fileInput = document.getElementById('file-ekskul');
+                const fileInput2 = document.getElementById('file-ekskul2');
                 let gambarUrl = document.getElementById('ekskul-gambar-url').value;
+                let gambar2Url = document.getElementById('ekskul-gambar2-url').value;
 
-                if (fileInput.files[0]) {
-                    const file = fileInput.files[0];
+                async function uploadFoto(file, key) {
+                    if (!file) return null;
                     if (file.size > 3 * 1024 * 1024) throw new Error('Foto maksimal 3MB');
                     const ext = file.name.split('.').pop();
-                    const fileName = `ekskul_${Date.now()}.${ext}`;
+                    const fileName = `ekskul_${key}_${Date.now()}.${ext}`;
                     const { error: upErr } = await window.supabaseClient.storage
                         .from('program-images').upload(fileName, file, { upsert: true });
                     if (upErr) throw upErr;
                     const { data: urlData } = window.supabaseClient.storage.from('program-images').getPublicUrl(fileName);
-                    gambarUrl = urlData.publicUrl;
+                    return urlData.publicUrl;
                 }
+
+                const url1 = await uploadFoto(fileInput.files[0], '1');
+                if (url1) gambarUrl = url1;
+                const url2 = await uploadFoto(fileInput2.files[0], '2');
+                if (url2) gambar2Url = url2;
 
                 const payload = {
                     nama: document.getElementById('ekskul-nama').value,
                     deskripsi: document.getElementById('ekskul-deskripsi').value,
                     urutan: parseInt(document.getElementById('ekskul-urutan').value) || 0,
                     aktif: document.getElementById('ekskul-aktif').value === 'true',
-                    gambar_url: gambarUrl || null
+                    gambar_url: gambarUrl || null,
+                    gambar2_url: gambar2Url || null
                 };
 
                 if (id) {
@@ -340,6 +362,7 @@
 
         loadEkskul();
     </script>
+    <script src="../js/admin-notifikasi.js"></script>
 </body>
 </html>
 

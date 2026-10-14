@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="img/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Profil lengkap SDIT Al-Madinah Kebumen, visi misi, sejarah, dan fasilitas sekolah Islam terpadu di Kebumen, Jawa Tengah.">
+    <meta name="keywords" content="SDIT Al-Madinah, sekolah Islam Kebumen, SD Islam terpadu Kebumen">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Profil SDIT Al-Madinah Kebumen - Sekolah Islam Terpadu">
+    <meta property="og:description" content="Profil lengkap SDIT Al-Madinah Kebumen, visi misi, sejarah, dan fasilitas sekolah Islam terpadu di Kebumen, Jawa Tengah.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SDIT Al-Madinah Kebumen">
     <title>Profil - SDIT Al-Madinah</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/landing.css">
@@ -11,10 +18,10 @@
 <body>
     <nav class="navbar">
         <div class="container">
-            <div class="logo">
+            <a href="index.html" style="text-decoration:none;color:inherit;"><div class="logo">
                 <img src="img/logo.png" alt="Logo" style="width:40px;height:40px;object-fit:contain;">
                 <span class="logo-text">SDIT Al-Madinah</span>
-            </div>
+            </div></a>
             <button class="hamburger" id="hamburger" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
@@ -23,9 +30,8 @@
                 <li><a href="profil.html" class="active">Profil</a></li>
                 <li><a href="program.html">Program</a></li>
                 <li><a href="berita.html">Berita</a></li>
-                <li><a href="ppdb.html">PPDB</a></li>
                 <li><a href="kontak.html">Kontak</a></li>
-                <li><a href="login.html" class="btn-login">Login</a></li>
+                <li><a href="https://spmb-aiis.vercel.app/" target="_blank" class="btn-login">Daftar</a></li>
             </ul>
         </div>
     </nav>
@@ -41,27 +47,62 @@
     <section class="content-section">
         <div class="container">
 
-            <!-- Tentang & Visi Misi -->
+            <!-- Visi Misi Tujuan -->
+            <div class="visimisi-section animate-on-scroll">
+                <div class="visimisi-text">
+                    <h2>Visi, Misi &amp; Tujuan</h2>
+                    <div class="visimisi-item">
+                        <div class="visimisi-label visi">VISI</div>
+                        <p>Menciptakan generasi Qur'ani yang unggul, berakhlak mulia, cerdas, dan berprestasi di dunia maupun akhirat.</p>
+                    </div>
+                    <div class="visimisi-item">
+                        <div class="visimisi-label misi">MISI</div>
+                        <ul>
+                            <li>Mengintegrasikan kurikulum nasional dengan nilai-nilai Islam</li>
+                            <li>Membentuk karakter yang berakhlaqul karimah</li>
+                            <li>Menciptakan lingkungan belajar yang dialogis dan kreatif</li>
+                            <li>Mengembangkan potensi akademik &amp; non-akademik</li>
+                            <li>Pendidikan berbasis lingkungan yang hijau dan asri</li>
+                        </ul>
+                    </div>
+                    <div class="visimisi-item">
+                        <div class="visimisi-label tujuan">TUJUAN</div>
+                        <p>Menghasilkan lulusan yang beriman, bertakwa, berilmu, dan siap berkontribusi bagi agama, bangsa, dan masyarakat.</p>
+                    </div>
+                </div>
+
+                <div class="visimisi-graphic">
+                    <div class="vmt-wrap">
+                        <!-- SVG connector lines: dari tepi lingkaran ke tepi logo -->
+                        <svg class="vmt-svg" viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="150" y1="110" x2="150" y2="155" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="99"  y1="232" x2="118" y2="219" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="201" y1="232" x2="182" y2="219" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>
+                        <div class="vmt-card vmt-visi">
+                            <div class="vmt-icon">🎯</div>
+                            <div class="vmt-title">VISI</div>
+                        </div>
+                        <div class="vmt-card vmt-misi">
+                            <div class="vmt-icon">📋</div>
+                            <div class="vmt-title">MISI</div>
+                        </div>
+                        <div class="vmt-card vmt-tujuan">
+                            <div class="vmt-icon">🏆</div>
+                            <div class="vmt-title">TUJUAN</div>
+                        </div>
+                        <div class="vmt-logo">
+                            <img src="img/logo.png" alt="Logo SDIT Al-Madinah">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tentang -->
             <div class="profil-about animate-on-scroll">
                 <div class="profil-about-text">
                     <h2>Tentang SDIT Al-Madinah</h2>
                     <p>SDIT Al-Madinah adalah lembaga pendidikan Islam terpadu yang berkomitmen mencetak generasi berakhlak mulia, cerdas, dan berwawasan global.</p>
-                    <div class="visi-misi-grid">
-                        <div class="visi-box">
-                            <h4>🎯 Visi</h4>
-                            <p>Menciptakan generasi Qur'ani yang unggul, berakhlak mulia, dan berprestasi.</p>
-                        </div>
-                        <div class="misi-box">
-                            <h4>📋 Misi</h4>
-                            <ul>
-                                <li>Mengintegrasikan kurikulum nasional dengan nilai-nilai Islam</li>
-                                <li>Membentuk karakter yang berakhlaqul karimah</li>
-                                <li>Menciptakan lingkungan belajar yang dialogis dan kreatif</li>
-                                <li>Mengembangkan potensi akademik & non-akademik</li>
-                                <li>Pendidikan berbasis lingkungan yang hijau dan asri</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
                 <div class="profil-about-img">
                     <img src="img/latar2.jpg" alt="Tentang Sekolah" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
@@ -150,6 +191,9 @@
     <script src="js/chatbot.js"></script>
 </body>
 </html>
+
+
+
 
 
 

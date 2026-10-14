@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="img/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SDIT Al-Madinah Kebumen adalah sekolah dasar Islam terpadu yang mencetak generasi berakhlak mulia, cerdas, dan berwawasan global.">
+    <meta name="keywords" content="SDIT Al-Madinah, sekolah Islam Kebumen, SD Islam terpadu Kebumen">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="SDIT Al-Madinah Kebumen - Sekolah Dasar Islam Terpadu">
+    <meta property="og:description" content="SDIT Al-Madinah Kebumen adalah sekolah dasar Islam terpadu yang mencetak generasi berakhlak mulia, cerdas, dan berwawasan global.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SDIT Al-Madinah Kebumen">
     <title>SDIT Al-Madinah</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/landing.css">
@@ -11,10 +18,10 @@
 <body>
     <nav class="navbar">
         <div class="container">
-            <div class="logo">
+            <a href="index.html" style="text-decoration:none;color:inherit;"><div class="logo">
                 <img src="img/logo.png" alt="Logo" style="width:40px;height:40px;object-fit:contain;">
                 <span class="logo-text">SDIT Al-Madinah</span>
-            </div>
+            </div></a>
             <button class="hamburger" id="hamburger" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
@@ -23,9 +30,8 @@
                 <li><a href="profil.html">Profil</a></li>
                 <li><a href="program.html">Program</a></li>
                 <li><a href="berita.html">Berita</a></li>
-                <li><a href="ppdb.html">PPDB</a></li>
                 <li><a href="kontak.html">Kontak</a></li>
-                <li><a href="login.html" class="btn-login">Login</a></li>
+                <li><a href="https://spmb-aiis.vercel.app/" target="_blank" class="btn-login">Daftar</a></li>
             </ul>
         </div>
     </nav>
@@ -47,42 +53,102 @@
     <!-- Profil Singkat -->
     <section class="profil-singkat animate-on-scroll">
         <div class="container">
-            <h2 class="section-title">Profil Singkat</h2>
-            <div class="profil-singkat-grid">
-                <div class="profil-singkat-img">
-                    <img src="img/profil.JPG" alt="Foto Sekolah" onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
-                </div>
-                <div class="profil-singkat-text">
-                    <p>SDIT Al-Madinah adalah lembaga pendidikan Islam terpadu yang berkomitmen mencetak generasi yang berakhlak mulia, cerdas, dan berwawasan global.</p>
-                    <p>Para siswa tidak hanya dibekali dengan ilmu pengetahuan umum, tetapi juga dengan pendidikan agama yang kuat, pembentukan karakter, dan berbagai keterampilan untuk menghadapi tantangan masa depan.</p>
-                    <p>Dengan metode pembelajaran modern yang terintegrasi dengan nilai-nilai Islam, kami memastikan setiap siswa berkembang secara optimal dalam aspek akademik, spiritual, dan sosial.</p>
-                    <div class="profil-highlight">
-                        <h4>Mengapa Pilih Kami?</h4>
-                        <p>Kami menggali potensi dan bakat setiap siswa melalui pendekatan pendidikan yang holistik dan personal, memastikan setiap anak mendapatkan perhatian dan bimbingan terbaik.</p>
+            <div class="profil-singkat-wrap">
+
+                <!-- Gambar kiri -->
+                <div class="ps-img-wrap">
+                    <img src="img/profil.JPG" alt="Foto Sekolah"
+                         onerror="this.src='https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80'">
+                    <!-- Badge float -->
+                    <div class="ps-badge">
+                        <span class="ps-badge-num">10+</span>
+                        <span class="ps-badge-label">Tahun<br>Berdiri</span>
                     </div>
-                    <a href="profil.html" class="btn-profil">Selengkapnya →</a>
                 </div>
+
+                <!-- Konten kanan -->
+                <div class="ps-content">
+                    <span class="ps-eyebrow">Tentang Kami</span>
+                    <h2 class="ps-title">SDIT Al-Madinah<br><span>Kebumen</span></h2>
+                    <p class="ps-lead">Lembaga pendidikan Islam terpadu yang berkomitmen mencetak generasi berakhlak mulia, cerdas, dan berwawasan global.</p>
+                    <p class="ps-body">Para siswa dibekali ilmu pengetahuan umum sekaligus pendidikan agama yang kuat, pembentukan karakter, dan keterampilan menghadapi tantangan masa depan.</p>
+
+                    <!-- Stats row -->
+                    <div class="ps-stats">
+                        <div class="ps-stat">
+                            <span class="ps-stat-num">500+</span>
+                            <span class="ps-stat-label">Siswa Aktif</span>
+                        </div>
+                        <div class="ps-stat-divider"></div>
+                        <div class="ps-stat">
+                            <span class="ps-stat-num">50+</span>
+                            <span class="ps-stat-label">Tenaga Pendidik</span>
+                        </div>
+                        <div class="ps-stat-divider"></div>
+                        <div class="ps-stat">
+                            <span class="ps-stat-num">8+</span>
+                            <span class="ps-stat-label">Ekskul</span>
+                        </div>
+                    </div>
+
+                    <!-- Highlight -->
+                    <div class="ps-highlight">
+                        <div class="ps-highlight-icon">💡</div>
+                        <p><strong>Mengapa Pilih Kami?</strong> Pendekatan holistik &amp; personal — setiap anak mendapat perhatian dan bimbingan terbaik.</p>
+                    </div>
+
+                    <a href="profil.html" class="ps-btn">Selengkapnya →</a>
+                </div>
+
             </div>
         </div>
     </section>
 
     <section class="quick-info animate-on-scroll">
         <div class="container">
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-icon">🎯</div>
-                    <h3>Visi</h3>
-                    <p>Menciptakan generasi Qur'ani yang unggul, berakhlak mulia, dan berprestasi</p>
+            <div class="visimisi-home">
+                <!-- Teks kiri -->
+                <div class="visimisi-home-text">
+                    <h2>Visi, Misi &amp; Tujuan</h2>
+                    <div class="visimisi-item">
+                        <div class="visimisi-label visi">VISI</div>
+                        <p>Menciptakan generasi Qur'ani yang unggul, berakhlak mulia, cerdas, dan berprestasi di dunia maupun akhirat.</p>
+                    </div>
+                    <div class="visimisi-item">
+                        <div class="visimisi-label misi">MISI</div>
+                        <p>Mengintegrasikan kurikulum nasional dengan nilai-nilai Islam untuk membentuk karakter berakhlaqul karimah dan mengembangkan potensi akademik &amp; non-akademik siswa secara menyeluruh.</p>
+                    </div>
+                    <div class="visimisi-item">
+                        <div class="visimisi-label tujuan">TUJUAN</div>
+                        <p>Menghasilkan lulusan yang beriman, bertakwa, berilmu, dan siap berkontribusi bagi agama, bangsa, dan masyarakat.</p>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <div class="info-icon">📚</div>
-                    <h3>Misi</h3>
-                    <p>Mengintegrasikan kurikulum nasional dengan nilai-nilai Islam untuk membentuk karakter berakhlaqul karimah dan mengembangkan potensi akademik & non-akademik</p>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon">🏆</div>
-                    <h3>Prestasi</h3>
-                    <p>Meraih berbagai penghargaan tingkat nasional dan internasional dalam bidang akademik dan non-akademik</p>
+
+                <!-- Grafik kanan -->
+                <div class="visimisi-graphic">
+                    <div class="vmt-wrap">
+                        <!-- SVG connector lines: dari tepi lingkaran ke tepi logo -->
+                        <svg class="vmt-svg" viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="150" y1="110" x2="150" y2="155" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="99"  y1="232" x2="118" y2="219" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="201" y1="232" x2="182" y2="219" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>
+                        <div class="vmt-card vmt-visi">
+                            <div class="vmt-icon">🎯</div>
+                            <div class="vmt-title">VISI</div>
+                        </div>
+                        <div class="vmt-card vmt-misi">
+                            <div class="vmt-icon">📋</div>
+                            <div class="vmt-title">MISI</div>
+                        </div>
+                        <div class="vmt-card vmt-tujuan">
+                            <div class="vmt-icon">🏆</div>
+                            <div class="vmt-title">TUJUAN</div>
+                        </div>
+                        <div class="vmt-logo">
+                            <img src="img/logo.png" alt="Logo SDIT Al-Madinah">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,8 +168,26 @@
     <section class="ekskul-section animate-on-scroll">
         <div class="ekskul-wrapper">
             <h2>Ekstrakurikuler</h2>
-            <div id="ekskul-grid" class="ekskul-grid">
+            <div class="ekskul-track-wrapper">
+                <div id="ekskul-grid" class="ekskul-grid">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Postingan Terbaru -->
+    <section class="postingan-section animate-on-scroll">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Postingan Terbaru</h2>
+                <p class="section-subtitle">Informasi dan berita terkini dari SDIT Al-Madinah</p>
+            </div>
+            <div id="postingan-grid" class="postingan-grid">
                 <!-- Loaded dynamically -->
+            </div>
+            <div style="text-align:center;margin-top:32px;">
+                <a href="berita.html" class="btn-lihat-semua">Lihat Semua Berita →</a>
             </div>
         </div>
     </section>
@@ -113,8 +197,7 @@
             <div class="cta-content">
                 <h2>Bergabunglah Bersama Kami</h2>
                 <p>Daftarkan diri Anda sekarang dan raih masa depan gemilang bersama SDIT Al-Madinah</p>
-                <a href="ppdb.html" class="btn-cta">Daftar PPDB Sekarang</a>
-            </div>
+                <a href="https://spmb-aiis.vercel.app/" target="_blank" class="btn-cta">Daftar PPDB Sekarang</a>
         </div>
     </section>
 
@@ -154,6 +237,9 @@
     <script src="js/chatbot.js"></script>
 </body>
 </html>
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-// Footer HTML yang sama untuk semua halaman
+﻿// Footer HTML yang sama untuk semua halaman
 const footerHTML = `
     <div class="footer-main">
         <div class="container">
@@ -6,6 +6,16 @@ const footerHTML = `
                 <div class="footer-col">
                     <h3 style="color:#fbbf24; font-size:22px; margin-bottom:12px;">SDIT Al-Madinah</h3>
                     <p>Lembaga pendidikan Islam terpadu yang berkomitmen mencetak generasi berakhlak mulia, cerdas, dan berwawasan global.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Sekolah Kami</h3>
+                    <ul>
+                        <li style="margin-bottom:10px;"><span style="margin-right:8px;">🏫</span>TK/KB Yaa Bunayya Kebumen</li>
+                        <li style="margin-bottom:10px;"><span style="margin-right:8px;">🏫</span>SDIT Al-Madinah</li>
+                        <li style="margin-bottom:10px;"><span style="margin-right:8px;">🏫</span>SMP Integral Hidayatullah Kebumen</li>
+                        <li style="margin-bottom:10px;"><span style="margin-right:8px;">🏫</span>RA'I Nurul Huda Pengaringan</li>
+                        <li style="margin-bottom:10px;"><span style="margin-right:8px;">🏫</span>KB TK Yaa Bunayya 2 Sruweng</li>
+                    </ul>
                 </div>
                 <div class="footer-col">
                     <h3>Kontak</h3>
@@ -58,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (footer && !footer.querySelector('.footer-top')) {
         footer.innerHTML = footerHTML;
     }
-    
+
     // Hamburger menu toggle
     window.toggleMenu = function() {
         const menu = document.querySelector('.nav-menu');
@@ -77,47 +87,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Scroll animations untuk semua halaman
+    // Scroll animations
     const animObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('visible');
         });
     }, { threshold: 0.1 });
-
     document.querySelectorAll('.animate-on-scroll').forEach(el => animObserver.observe(el));
-    
-    // Tambahkan floating WhatsApp button
+
+    // Floating WhatsApp button
     const waBtn = document.createElement('a');
     waBtn.href = 'https://wa.me/6285113253248';
     waBtn.target = '_blank';
     waBtn.title = 'Chat WhatsApp - 085113253248';
     waBtn.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="34" height="34" alt="WhatsApp">`;
-    waBtn.style.cssText = `
-        position: fixed;
-        bottom: 25px;
-        right: 25px;
-        background: #25d366;
-        color: white;
-        width: 58px;
-        height: 58px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 15px rgba(37,211,102,0.5);
-        z-index: 9999;
-        transition: transform 0.3s, box-shadow 0.3s;
-        text-decoration: none;
-    `;
-    waBtn.onmouseover = () => {
-        waBtn.style.transform = 'scale(1.1)';
-        waBtn.style.boxShadow = '0 6px 20px rgba(37,211,102,0.7)';
-    };
-    waBtn.onmouseout = () => {
-        waBtn.style.transform = 'scale(1)';
-        waBtn.style.boxShadow = '0 4px 15px rgba(37,211,102,0.5)';
-    };
+    waBtn.style.cssText = `position:fixed;bottom:25px;right:25px;background:#25d366;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.5);z-index:9999;transition:transform 0.3s,box-shadow 0.3s;text-decoration:none;`;
+    waBtn.onmouseover = () => { waBtn.style.transform = 'scale(1.1)'; waBtn.style.boxShadow = '0 6px 20px rgba(37,211,102,0.7)'; };
+    waBtn.onmouseout  = () => { waBtn.style.transform = 'scale(1)';   waBtn.style.boxShadow = '0 4px 15px rgba(37,211,102,0.5)'; };
     document.body.appendChild(waBtn);
 });

@@ -24,7 +24,66 @@ async function loadBeritaDetail() {
         }
         
         // Update page title
-        document.title = data.judul + ' - SMA Negeri 1';
+        document.title = data.judul + ' - SDIT Al-Madinah Kebumen';
+
+        // ── SEO Meta Tags (dinamis) ──
+        const desc = data.konten
+            ? data.konten.replace(/<[^>]*>/g, '').substring(0, 160).trim()
+            : data.judul;
+        const imgUrl  = data.gambar_url || 'https://sdit-almadinah.sch.id/img/logo.png';
+        const pageUrl = window.location.href;
+
+        function setMeta(name, content, prop = false) {
+            const attr = prop ? 'property' : 'name';
+            let el = document.querySelector(`meta[${attr}="${name}"]`);
+            if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+            el.setAttribute('content', content);
+        }
+
+        setMeta('description', desc);
+        setMeta('keywords', `${data.kategori}, SDIT Al-Madinah, Kebumen, berita sekolah, ${data.judul}`);
+        setMeta('author', 'SDIT Al-Madinah Kebumen');
+
+        // Open Graph (Facebook, WhatsApp preview)
+        setMeta('og:title',       data.judul, true);
+        setMeta('og:description', desc, true);
+        setMeta('og:image',       imgUrl, true);
+        setMeta('og:url',         pageUrl, true);
+        setMeta('og:type',        'article', true);
+        setMeta('og:site_name',   'SDIT Al-Madinah Kebumen', true);
+
+        // Twitter Card
+        setMeta('twitter:card',        'summary_large_image');
+        setMeta('twitter:title',       data.judul);
+        setMeta('twitter:description', desc);
+        setMeta('twitter:image',       imgUrl);
+
+        // Canonical URL
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
+        canonical.href = pageUrl;
+
+        // JSON-LD Structured Data (Google Article)
+        const jsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'NewsArticle',
+            headline: data.judul,
+            description: desc,
+            image: imgUrl,
+            datePublished: data.tanggal,
+            dateModified: data.updated_at || data.tanggal,
+            author: { '@type': 'Organization', name: 'SDIT Al-Madinah Kebumen' },
+            publisher: {
+                '@type': 'Organization',
+                name: 'SDIT Al-Madinah Kebumen',
+                logo: { '@type': 'ImageObject', url: 'https://sdit-almadinah.sch.id/img/logo.png' }
+            },
+            url: pageUrl,
+            mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl }
+        };
+        let ldScript = document.getElementById('json-ld-article');
+        if (!ldScript) { ldScript = document.createElement('script'); ldScript.id = 'json-ld-article'; ldScript.type = 'application/ld+json'; document.head.appendChild(ldScript); }
+        ldScript.textContent = JSON.stringify(jsonLd);
         
         // Display berita
         document.getElementById('article-category').textContent = data.kategori;

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sdit-almadinah.sch.id/sitemap.xml

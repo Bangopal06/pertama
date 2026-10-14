@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="img/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hubungi SDIT Al-Madinah Kebumen. Alamat: Jl. Tentara Pelajar No.48 Kebumen. WhatsApp: 0851-1325-3248.">
+    <meta name="keywords" content="SDIT Al-Madinah, sekolah Islam Kebumen, SD Islam terpadu Kebumen">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Kontak SDIT Al-Madinah Kebumen">
+    <meta property="og:description" content="Hubungi SDIT Al-Madinah Kebumen. Alamat: Jl. Tentara Pelajar No.48 Kebumen. WhatsApp: 0851-1325-3248.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SDIT Al-Madinah Kebumen">
     <title>Kontak - SDIT Al-Madinah</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/landing.css">
@@ -11,10 +18,10 @@
 <body>
     <nav class="navbar">
         <div class="container">
-            <div class="logo">
+            <a href="index.html" style="text-decoration:none;color:inherit;"><div class="logo">
                 <img src="img/logo.png" alt="Logo" style="width:40px;height:40px;object-fit:contain;">
                 <span class="logo-text">SDIT Al-Madinah</span>
-            </div>
+            </div></a>
             <button class="hamburger" id="hamburger" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
@@ -23,9 +30,8 @@
                 <li><a href="profil.html">Profil</a></li>
                 <li><a href="program.html">Program</a></li>
                 <li><a href="berita.html">Berita</a></li>
-                <li><a href="ppdb.html">PPDB</a></li>
                 <li><a href="kontak.html" class="active">Kontak</a></li>
-                <li><a href="login.html" class="btn-login">Login</a></li>
+                <li><a href="https://spmb-aiis.vercel.app/" target="_blank" class="btn-login">Daftar</a></li>
             </ul>
         </div>
     </nav>
@@ -42,41 +48,66 @@
 
     <section class="contact-section">
         <div class="container">
-            <div class="contact-cards">
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+
+            <!-- Contact Cards -->
+            <div class="kontak-hero-cards">
+
+                <!-- WhatsApp -->
+                <div class="khcard khcard-wa">
+                    <div class="khcard-glow"></div>
+                    <div class="khcard-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                         </svg>
                     </div>
-                    <h3>085113253248</h3>
-                    <p>Senin - Jumat: 08.00 - 17.00 WIB</p>
-                    <a href="https://wa.me/6285113253248" target="_blank" style="display:inline-block; margin-top:10px; background:#25d366; color:white; padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:600;">
-                        💬 Chat WhatsApp
-                    </a>
+                    <div class="khcard-body">
+                        <div class="khcard-tag">WhatsApp</div>
+                        <div class="khcard-value">0851-1325-3248</div>
+                        <div class="khcard-sub">Senin – Jumat · 08.00 – 17.00 WIB</div>
+                        <a href="https://wa.me/6285113253248" target="_blank" class="khcard-btn">
+                            💬 Chat Sekarang
+                        </a>
+                    </div>
                 </div>
 
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                            <polyline points="22,6 12,13 2,6"></polyline>
+                <!-- Email -->
+                <div class="khcard khcard-email">
+                    <div class="khcard-glow"></div>
+                    <div class="khcard-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
                         </svg>
                     </div>
-                    <h3>Sdit almadinah .com</h3>
-                    <p>Email resmi sekolah</p>
+                    <div class="khcard-body">
+                        <div class="khcard-tag">Email</div>
+                        <div class="khcard-value">sdit.almadinah@gmail.com</div>
+                        <div class="khcard-sub">Email resmi sekolah</div>
+                        <a href="mailto:sdit.almadinah@gmail.com" class="khcard-btn">
+                            ✉️ Kirim Email
+                        </a>
+                    </div>
                 </div>
 
-                <div class="contact-card">
-                    <div class="contact-icon">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
+                <!-- Alamat -->
+                <div class="khcard khcard-lokasi">
+                    <div class="khcard-glow"></div>
+                    <div class="khcard-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
                         </svg>
                     </div>
-                    <h3>Jl. Tentara Pelajar No.48, Kutosari, Kec. Kebumen, Kabupaten Kebumen, Jawa Tengah 54317</h3>
-                    <p>Lokasi sekolah</p>
+                    <div class="khcard-body">
+                        <div class="khcard-tag">Alamat</div>
+                        <div class="khcard-value" style="font-size:15px;">Jl. Tentara Pelajar No.48, Kutosari, Kec. Kebumen, Kab. Kebumen, Jawa Tengah 54317</div>
+                        <div class="khcard-sub">Lokasi sekolah</div>
+                        <a href="https://maps.google.com/?q=Jl+Tentara+Pelajar+No+48+Kebumen" target="_blank" class="khcard-btn">
+                            📍 Lihat di Maps
+                        </a>
+                    </div>
                 </div>
+
             </div>
 
             <div class="map-section">
@@ -151,6 +182,9 @@
     <script src="js/chatbot.js"></script>
 </body>
 </html>
+
+
+
 
 
 

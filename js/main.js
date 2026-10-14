@@ -111,29 +111,120 @@ async function loadEkskul() {
         if (error) throw error;
 
         if (!data || data.length === 0) {
-            grid.innerHTML = '<p style="color:white;text-align:center;grid-column:1/-1;">Belum ada data ekskul.</p>';
+            grid.innerHTML = '<p style="color:white;text-align:center;padding:20px;">Belum ada data ekskul.</p>';
             return;
         }
 
-        grid.innerHTML = data.map(e => `
-            <div class="ekskul-card" style="${e.gambar_url ? `background-image: url('${e.gambar_url}')` : 'background: linear-gradient(135deg,#1e3a8a,#3b82f6)'}">
-                <div class="ekskul-overlay"></div>
-                <h3>${e.nama}</h3>
-            </div>
-        `).join('');
+        // Build single card HTML
+        function buildCard(e) {
+            const foto1 = e.gambar_url || '';
+            const foto2 = e.gambar2_url || '';
+            const hasTwo = foto1 && foto2;
 
-        // Set kolom berdasarkan jumlah item
-        const total = data.length;
-        let cols;
-        if (total <= 4) cols = total;
-        else if (total <= 6) cols = 3;
-        else if (total <= 8) cols = 4;
-        else if (total <= 10) cols = 5;
-        else cols = Math.ceil(total / 2);
-        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            const photoSlider = foto1
+                ? `<div class="ekskul-photos${hasTwo ? ' has-two' : ''}">
+                       <img src="${foto1}" alt="${e.nama}" loading="lazy" onerror="this.style.display='none'">
+                       ${hasTwo ? `<img src="${foto2}" alt="${e.nama} 2" loading="lazy" onerror="this.style.display='none'">` : ''}
+                   </div>`
+                : `<div style="position:absolute;inset:0;background:linear-gradient(135deg,#1e40af,#3b82f6);"></div>`;
+
+            const dots = hasTwo
+                ? `<div class="ekskul-dots">
+                       <span class="ekskul-dot active"></span>
+                       <span class="ekskul-dot"></span>
+                   </div>`
+                : '';
+
+            return `
+                <div class="ekskul-card">
+                    ${photoSlider}
+                    <div class="ekskul-overlay"></div>
+                    ${dots}
+                    <div class="ekskul-card-body">
+                        <h3>${e.nama}</h3>
+                        ${e.deskripsi ? `<div class="ekskul-card-desc">${e.deskripsi}</div>` : ''}
+                    </div>
+                </div>`;
+        }
+
+        const cardHTML = data.map(buildCard).join('');
+        // Duplicate for seamless infinite loop
+        grid.innerHTML = cardHTML + cardHTML;
+
+        // Foto 1 = default, Foto 2 = tampil saat hover via CSS
+        // Dots update on mouseenter/mouseleave
+        grid.querySelectorAll('.ekskul-card').forEach(card => {
+            const photos = card.querySelector('.ekskul-photos.has-two');
+            if (!photos) return;
+            const dots = card.querySelectorAll('.ekskul-dot');
+            card.addEventListener('mouseenter', () => {
+                dots[0]?.classList.remove('active');
+                dots[1]?.classList.add('active');
+            });
+            card.addEventListener('mouseleave', () => {
+                dots[1]?.classList.remove('active');
+                dots[0]?.classList.add('active');
+            });
+        });
+
     } catch (err) {
         console.error('Error loading ekskul:', err);
     }
 }
 
 loadEkskul();
+
+// ===== POSTINGAN TERBARU =====
+async function loadPostinganTerbaru() {
+    const grid = document.getElementById('postingan-grid');
+    if (!grid) return;
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('berita')
+            .select('id, judul, konten, kategori, gambar_url, tanggal')
+            .order('tanggal', { ascending: false })
+            .limit(6);
+
+        if (error) throw error;
+        if (!data || data.length === 0) {
+            grid.innerHTML = '<p style="text-align:center;color:#6b7280;grid-column:1/-1;">Belum ada postingan.</p>';
+            return;
+        }
+
+        const katColor = {
+            'Akademik':   '#1e3a8a',
+            'Prestasi':   '#7c3aed',
+            'Kegiatan':   '#0891b2',
+            'Pengumuman': '#d97706',
+            'PPDB':       '#16a34a'
+        };
+
+        grid.innerHTML = data.map(b => {
+            const excerpt = b.konten
+                ? b.konten.replace(/<[^>]*>/g, '').substring(0, 100) + '...'
+                : '';
+            const tgl = new Date(b.tanggal).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+            const color = katColor[b.kategori] || '#1e3a8a';
+            return `
+                <a href="berita-detail.html?id=${b.id}" class="post-card">
+                    <div class="post-img">
+                        <img src="${b.gambar_url || 'https://via.placeholder.com/400x220?text=Berita'}"
+                             alt="${b.judul}" loading="lazy"
+                             onerror="this.src='https://via.placeholder.com/400x220?text=Berita'">
+                        <span class="post-kat" style="background:${color}">${b.kategori}</span>
+                    </div>
+                    <div class="post-body">
+                        <h4>${b.judul}</h4>
+                        <p>${excerpt}</p>
+                        <span class="post-tgl">📅 ${tgl}</span>
+                    </div>
+                </a>`;
+        }).join('');
+
+    } catch (err) {
+        console.error('Error loading postingan:', err);
+    }
+}
+
+loadPostinganTerbaru();

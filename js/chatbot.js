@@ -3,7 +3,7 @@
 // Ganti API_KEY dengan key baru dari console.groq.com
 // ============================================
 
-const GROQ_API_KEY = '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';
+const GROQ_API_KEY = 'GANTI_DENGAN_API_KEY_GROQ_ANDA';
 const GROQ_MODEL = 'llama-3.1-8b-instant';
 
 let dynamicData = { program: [], ekskul: [], berita: [], fasilitas: [] };
