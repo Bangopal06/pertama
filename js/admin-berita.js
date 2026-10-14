@@ -154,6 +154,7 @@ document.getElementById('berita-form').addEventListener('submit', async function
             konten: document.getElementById('konten').value,
             kategori: document.getElementById('kategori').value,
             gambar_url: gambarUrl,
+            foto_posisi: document.getElementById('foto_posisi')?.value || 'center',
             tanggal: new Date().toISOString()
         };
         
@@ -335,6 +336,9 @@ async function editBerita(id) {
             document.getElementById('judul').value = item.judul;
             document.getElementById('konten').value = item.konten;
             document.getElementById('kategori').value = item.kategori;
+            if (document.getElementById('foto_posisi')) {
+                document.getElementById('foto_posisi').value = item.foto_posisi || 'center';
+            }
             
             // Show preview if image exists
             const preview = document.getElementById('preview-img');

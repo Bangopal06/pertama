@@ -76,17 +76,17 @@
                     <!-- Stats row -->
                     <div class="ps-stats">
                         <div class="ps-stat">
-                            <span class="ps-stat-num">500+</span>
+                            <span class="ps-stat-num counter" data-target="500">0</span>
                             <span class="ps-stat-label">Siswa Aktif</span>
                         </div>
                         <div class="ps-stat-divider"></div>
                         <div class="ps-stat">
-                            <span class="ps-stat-num">50+</span>
+                            <span class="ps-stat-num counter" data-target="50">0</span>
                             <span class="ps-stat-label">Tenaga Pendidik</span>
                         </div>
                         <div class="ps-stat-divider"></div>
                         <div class="ps-stat">
-                            <span class="ps-stat-num">8+</span>
+                            <span class="ps-stat-num counter" data-target="8">0</span>
                             <span class="ps-stat-label">Ekskul</span>
                         </div>
                     </div>
@@ -109,18 +109,24 @@
             <div class="visimisi-home">
                 <!-- Teks kiri -->
                 <div class="visimisi-home-text">
-                    <h2>Visi, Misi &amp; Tujuan</h2>
+                    <h2>Visi, Misi &amp; Profil Output</h2>
                     <div class="visimisi-item">
                         <div class="visimisi-label visi">VISI</div>
-                        <p>Menciptakan generasi Qur'ani yang unggul, berakhlak mulia, cerdas, dan berprestasi di dunia maupun akhirat.</p>
+                        <p>Unggul dan bermartabat berlandaskan iman, ilmu, dan akhlak mulia, serta cinta lingkungan.</p>
                     </div>
                     <div class="visimisi-item">
                         <div class="visimisi-label misi">MISI</div>
-                        <p>Mengintegrasikan kurikulum nasional dengan nilai-nilai Islam untuk membentuk karakter berakhlaqul karimah dan mengembangkan potensi akademik &amp; non-akademik siswa secara menyeluruh.</p>
+                        <p>Menyelenggarakan pendidikan Islam terpadu dengan Kurikulum Merdeka dan Kurikulum Kekhasan Sekolah yang mengintegrasikan nilai tauhid dalam pembelajaran.</p>
                     </div>
                     <div class="visimisi-item">
-                        <div class="visimisi-label tujuan">TUJUAN</div>
-                        <p>Menghasilkan lulusan yang beriman, bertakwa, berilmu, dan siap berkontribusi bagi agama, bangsa, dan masyarakat.</p>
+                        <div class="visimisi-label tujuan">PROFIL OUTPUT</div>
+                        <ul style="margin:0;padding-left:18px;line-height:1.9;font-size:14px;color:#444;">
+                            <li>Akhlaqul Karimah</li>
+                            <li>Hafal Al-Qur'an 3 Juz</li>
+                            <li>Ekselen dalam bidang akademik</li>
+                            <li>Mahir dalam bidang Bahasa Inggris dan Arab</li>
+                            <li>Unggul dalam bidang <em>life skill</em></li>
+                        </ul>
                     </div>
                 </div>
 
@@ -142,8 +148,8 @@
                             <div class="vmt-title">MISI</div>
                         </div>
                         <div class="vmt-card vmt-tujuan">
-                            <div class="vmt-icon">🏆</div>
-                            <div class="vmt-title">TUJUAN</div>
+                            <div class="vmt-icon">⭐</div>
+                            <div class="vmt-title" style="font-size:10px;letter-spacing:0.5px;">PROFIL OUTPUT</div>
                         </div>
                         <div class="vmt-logo">
                             <img src="img/logo.png" alt="Logo SDIT Al-Madinah">
@@ -194,17 +200,15 @@
 
     <!-- Gambar SPMB -->
     <section class="cta-section animate-on-scroll">
+        <div style="position:absolute;bottom:6%;left:50%;transform:translateX(-50%);z-index:2;">
+            <a href="https://spmb-aiis.vercel.app/" target="_blank"
+               style="display:inline-block;padding:clamp(10px,1.8vh,18px) clamp(40px,8vw,100px);background:#f5a623;color:#7b1f00;border-radius:50px;font-size:clamp(14px,2vw,22px);font-weight:800;text-decoration:none;box-shadow:0 4px 18px rgba(0,0,0,0.3);white-space:nowrap;transition:transform .2s;"
+               onmouseover="this.style.transform='translateY(-2px)'"
+               onmouseout="this.style.transform='translateY(0)'">
+                Daftar Sekarang →
+            </a>
+        </div>
     </section>
-
-    <!-- Tombol Daftar di bawah gambar -->
-    <div style="text-align:center;padding:32px 20px 36px;background:linear-gradient(180deg,#c0392b 0%,#e74c3c 100%);">
-        <a href="https://spmb-aiis.vercel.app/" target="_blank"
-           style="display:inline-block;padding:16px 48px;background:#f5a623;color:#7b1f00;border-radius:30px;font-size:18px;font-weight:800;text-decoration:none;box-shadow:0 4px 18px rgba(0,0,0,0.25);transition:transform .2s,box-shadow .2s;"
-           onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.3)'"
-           onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 18px rgba(0,0,0,0.25)'">
-            Daftar Sekarang →
-        </a>
-    </div>
 
     <footer class="footer"></footer>
 
@@ -240,6 +244,37 @@
         document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
     </script>
     <script src="js/chatbot.js"></script>
+    <script>
+        // Counter animation
+        function animateCounter(el) {
+            const target = parseInt(el.dataset.target);
+            const duration = 1800;
+            const step = target / (duration / 16);
+            let current = 0;
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                    el.textContent = target + '+';
+                } else {
+                    el.textContent = Math.floor(current) + '+';
+                }
+            }, 16);
+        }
+
+        // Trigger saat elemen masuk viewport
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    animateCounter(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+    </script>
 </body>
 </html>
 

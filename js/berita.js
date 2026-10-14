@@ -3,10 +3,12 @@ let allBeritaData = [];
 function buildCard(b) {
     const excerpt = b.konten.length > 150 ? b.konten.substring(0, 150) + '...' : b.konten;
     const katClass = b.kategori === 'PPDB' ? 'news-category ppdb' : 'news-category';
+    const posisi = b.foto_posisi || 'center';
     return `
         <div class="news-card" data-kategori="${b.kategori}">
             <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}"
                  alt="${b.judul}" class="news-image" loading="lazy"
+                 style="object-position:${posisi};"
                  onerror="this.src='https://via.placeholder.com/400x250?text=Berita+Sekolah'">
             <div class="news-content">
                 <span class="${katClass}">${b.kategori}</span>
