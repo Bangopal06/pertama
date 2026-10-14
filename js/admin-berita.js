@@ -1,4 +1,4 @@
-if (!localStorage.getItem('isLoggedIn')) {
+﻿if (!localStorage.getItem('isLoggedIn')) {
     window.location.href = '../login.html';
 }
 
@@ -19,7 +19,7 @@ document.getElementById('btn-tambah').addEventListener('click', function() {
     document.getElementById('form-berita').style.display = 'block';
     document.getElementById('form-title').textContent = 'Tambah Berita Baru';
     document.getElementById('berita-form').reset();
-    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('preview-img').style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
     document.getElementById('upload-progress').style.display = 'none';
     document.getElementById('file-upload-section').style.display = 'block';
     document.getElementById('url-input-section').style.display = 'none';
@@ -30,7 +30,7 @@ document.getElementById('btn-tambah').addEventListener('click', function() {
 document.getElementById('btn-batal').addEventListener('click', function() {
     document.getElementById('form-berita').style.display = 'none';
     document.getElementById('berita-form').reset();
-    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('preview-img').style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
     document.getElementById('upload-progress').style.display = 'none';
     currentImageUrl = null;
     editingId = null;
@@ -63,10 +63,13 @@ document.getElementById('gambar_url').addEventListener('input', function(e) {
     
     if (url) {
         preview.src = url;
-        preview.style.display = 'block';
+        preview.style.display = 'block'; document.getElementById('crop-container').style.display = 'none';
         preview.onerror = function() {
-            preview.style.display = 'none';
+            preview.style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
             alert('URL gambar tidak valid atau tidak bisa diakses');
+        };
+        preview.onload = function() {
+            if (typeof initCrop === 'function') initCrop(url);
         };
         currentImageUrl = url;
     } else {
@@ -99,7 +102,8 @@ document.getElementById('gambar_file').addEventListener('change', function(e) {
         const reader = new FileReader();
         reader.onload = function(event) {
             preview.src = event.target.result;
-            preview.style.display = 'block';
+            preview.style.display = 'block'; document.getElementById('crop-container').style.display = 'none';
+            if (typeof initCrop === 'function') initCrop(event.target.result);
         };
         reader.readAsDataURL(file);
     } else {
@@ -154,7 +158,7 @@ document.getElementById('berita-form').addEventListener('submit', async function
             konten: document.getElementById('konten').value,
             kategori: document.getElementById('kategori').value,
             gambar_url: gambarUrl,
-            foto_posisi: document.getElementById('foto_posisi')?.value || 'center',
+            foto_posisi: parseInt(document.getElementById('foto_posisi')?.value) || 50,
             tanggal: new Date().toISOString()
         };
         
@@ -187,7 +191,7 @@ document.getElementById('berita-form').addEventListener('submit', async function
         
         document.getElementById('form-berita').style.display = 'none';
         document.getElementById('berita-form').reset();
-        document.getElementById('preview-img').style.display = 'none';
+        document.getElementById('preview-img').style.display = 'none'; document.getElementById('crop-container').style.display = 'none';
         document.getElementById('upload-progress').style.display = 'none';
         currentImageUrl = null;
         editingId = null;
@@ -337,15 +341,19 @@ async function editBerita(id) {
             document.getElementById('konten').value = item.konten;
             document.getElementById('kategori').value = item.kategori;
             if (document.getElementById('foto_posisi')) {
-                document.getElementById('foto_posisi').value = item.foto_posisi || 'center';
+                document.getElementById('foto_posisi').value = item.foto_posisi || 50;
             }
             
-            // Show preview if image exists
+            // Show preview + trigger crop
             const preview = document.getElementById('preview-img');
             if (item.gambar_url) {
-                preview.src = item.gambar_url;
-                preview.style.display = 'block';
                 currentImageUrl = item.gambar_url;
+                if (typeof initCrop === 'function') {
+                    initCrop(item.gambar_url);
+                } else {
+                    preview.src = item.gambar_url;
+                    preview.style.display = 'block'; document.getElementById('crop-container').style.display = 'none';
+                }
             }
             
             editingId = id;

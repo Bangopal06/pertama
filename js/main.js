@@ -212,7 +212,7 @@ async function loadPostinganTerbaru() {
                     <div class="post-img">
                         <img src="${b.gambar_url || 'https://via.placeholder.com/400x220?text=Berita'}"
                              alt="${b.judul}" loading="lazy"
-                             style="object-position:${posisi};"
+                             style="object-position:center ${isNaN(b.foto_posisi) ? 'center' : b.foto_posisi + '%'};"
                              onerror="this.src='https://via.placeholder.com/400x220?text=Berita'">
                         <span class="post-kat" style="background:${color}">${b.kategori}</span>
                     </div>
