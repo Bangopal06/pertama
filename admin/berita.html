@@ -163,14 +163,11 @@
     <script>
     // ===== CROP MODAL =====
     const CARD_RATIO = 260 / 400;
-    let cropCurrentSrc = '';
 
     function bukaModalCrop() {
         const src = document.getElementById('preview-img').src;
         if (!src || src === window.location.href) return;
-        cropCurrentSrc = src;
-        const modal = document.getElementById('modal-crop');
-        modal.style.display = 'flex';
+        document.getElementById('modal-crop').style.display = 'flex';
         initCrop(src);
     }
 
@@ -180,7 +177,8 @@
 
     function simpanPosisi() {
         const pct = parseInt(document.getElementById('foto_posisi').value) || 50;
-        document.getElementById('posisi-preview-label').textContent = 'Posisi: ' + pct + '%';
+        const lbl = document.getElementById('posisi-preview-label');
+        if (lbl) lbl.textContent = 'Posisi: ' + pct + '%';
         tutupModalCrop();
     }
 
@@ -206,7 +204,7 @@
             function update() {
                 const pct = Math.round(((topPx + boxH / 2) / H) * 100);
                 posInput.value = pct;
-                posLabel.textContent = 'Posisi: ' + pct + '%';
+                if (posLabel) posLabel.textContent = 'Posisi: ' + pct + '%';
                 cropBox.style.top    = topPx + 'px';
                 cropBox.style.height = boxH + 'px';
                 darkTop.style.height = topPx + 'px';
@@ -227,14 +225,6 @@
 
         if (img.complete && img.naturalHeight) setup();
         else img.onload = setup;
-    }
-
-    // Tampilkan tombol atur posisi setelah preview ada
-    function showAturPosisi(src) {
-        const preview = document.getElementById('preview-img');
-        preview.src = src;
-        preview.style.display = 'block';
-        document.getElementById('btn-atur-posisi-wrap').style.display = 'block';
     }
     </script>
 </body>

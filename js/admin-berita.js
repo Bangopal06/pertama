@@ -69,7 +69,7 @@ document.getElementById('gambar_url').addEventListener('input', function(e) {
             alert('URL gambar tidak valid atau tidak bisa diakses');
         };
         preview.onload = function() {
-            if (typeof showAturPosisi === 'function') showAturPosisi(url);
+            document.getElementById('btn-atur-posisi-wrap').style.display = 'block';
         };
         currentImageUrl = url;
     } else {
@@ -102,8 +102,8 @@ document.getElementById('gambar_file').addEventListener('change', function(e) {
         const reader = new FileReader();
         reader.onload = function(event) {
             preview.src = event.target.result;
-            preview.style.display = 'block'
-            if (typeof showAturPosisi === 'function') showAturPosisi(event.target.result);
+            preview.style.display = 'block';
+            document.getElementById('btn-atur-posisi-wrap').style.display = 'block';
         };
         reader.readAsDataURL(file);
     } else {
@@ -344,11 +344,15 @@ async function editBerita(id) {
                 document.getElementById('foto_posisi').value = item.foto_posisi || 50;
             }
             
-            // Show preview + trigger crop
+            // Show preview
             const preview = document.getElementById('preview-img');
             if (item.gambar_url) {
                 currentImageUrl = item.gambar_url;
-                if (typeof showAturPosisi === 'function') showAturPosisi(item.gambar_url);
+                preview.src = item.gambar_url;
+                preview.style.display = 'block';
+                document.getElementById('btn-atur-posisi-wrap').style.display = 'block';
+                const lbl = document.getElementById('posisi-preview-label');
+                if (lbl) lbl.textContent = 'Posisi: ' + (item.foto_posisi || 50) + '%';
             }
             
             editingId = id;
