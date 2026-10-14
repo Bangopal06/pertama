@@ -65,25 +65,40 @@
                             </div>
                             <small id="progress-text">Uploading...</small>
                         </div>
-                        <!-- Crop preview area -->
-                        <div id="crop-container" style="display:none;margin-top:10px;">
-                            <p style="font-size:13px;color:#666;margin-bottom:8px;">
-                                🖼️ <strong>Atur posisi foto:</strong> Geser kotak kuning untuk menentukan bagian foto yang tampil di card berita.
-                            </p>
-                            <div id="crop-wrapper" style="position:relative;display:inline-block;user-select:none;cursor:default;border-radius:6px;overflow:hidden;max-width:100%;">
-                                <img id="preview-img" src="" alt="Preview" style="display:block;max-width:100%;height:auto;pointer-events:none;">
-                                <!-- Overlay gelap -->
+                        <img id="preview-img" src="" alt="Preview" style="max-width:100%;height:200px;object-fit:cover;display:none;border-radius:5px;margin-top:10px;">
+                        <!-- Tombol atur posisi -->
+                        <div id="btn-atur-posisi-wrap" style="display:none;margin-top:8px;">
+                            <button type="button" onclick="bukaModalCrop()" style="background:#1e3a8a;color:white;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">
+                                🖼️ Atur Posisi Foto
+                            </button>
+                            <span id="posisi-preview-label" style="font-size:12px;color:#6b7280;margin-left:10px;">Posisi: tengah</span>
+                        </div>
+                        <input type="hidden" id="foto_posisi" value="50">
+                    </div>
+
+                    <!-- Modal Crop -->
+                    <div id="modal-crop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;align-items:center;justify-content:center;">
+                        <div style="background:white;border-radius:14px;padding:24px;width:90%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                <h3 style="margin:0;font-size:16px;color:#1e3a8a;">🖼️ Atur Posisi Foto</h3>
+                                <button onclick="tutupModalCrop()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#6b7280;">✕</button>
+                            </div>
+                            <p style="font-size:13px;color:#6b7280;margin-bottom:12px;">Geser kotak kuning untuk menentukan bagian foto yang tampil di card berita.</p>
+                            <div id="crop-wrapper" style="position:relative;display:block;user-select:none;border-radius:8px;overflow:hidden;width:100%;">
+                                <img id="crop-preview-img" src="" alt="Preview" style="display:block;width:100%;height:auto;pointer-events:none;">
                                 <div id="crop-dark-top"    style="position:absolute;left:0;right:0;top:0;background:rgba(0,0,0,0.5);pointer-events:none;"></div>
-                                <div id="crop-dark-bottom" style="position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);pointer-events:none;"></div>
-                                <!-- Kotak crop -->
-                                <div id="crop-box" style="position:absolute;left:0;right:0;border:2px solid #fbbf24;box-shadow:0 0 0 1px rgba(0,0,0,0.3);cursor:ns-resize;box-sizing:border-box;">
-                                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(251,191,36,0.85);color:#7b1f00;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap;pointer-events:none;">Geser untuk atur posisi</div>
+                                <div id="crop-dark-bottom" style="position:absolute;left:0;right:0;background:rgba(0,0,0,0.5);pointer-events:none;"></div>
+                                <div id="crop-box" style="position:absolute;left:0;right:0;border:2px solid #fbbf24;box-sizing:border-box;cursor:ns-resize;">
+                                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(251,191,36,0.9);color:#7b1f00;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap;pointer-events:none;">⬆⬇ Geser</div>
                                 </div>
                             </div>
-                            <input type="hidden" id="foto_posisi" value="50">
-                            <p style="font-size:12px;color:#9ca3af;margin-top:6px;">Posisi: <span id="posisi-label">50%</span></p>
+                            <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:10px;align-items:center;">
+                                <span id="crop-posisi-label" style="font-size:13px;color:#6b7280;">Posisi: 50%</span>
+                                <button onclick="tutupModalCrop()" style="padding:8px 20px;background:#e5e7eb;border:none;border-radius:7px;cursor:pointer;font-weight:600;">Batal</button>
+                                <button onclick="simpanPosisi()" style="padding:8px 24px;background:#1e3a8a;color:white;border:none;border-radius:7px;cursor:pointer;font-weight:600;">✓ Simpan Posisi</button>
+                            </div>
                         </div>
-                        <img id="preview-img-fallback" src="" alt="Preview" style="max-width:100%;height:200px;object-fit:cover;display:none;border-radius:5px;margin-top:10px;">
+                    </div>
                     </div>
                     <div class="form-group">
                         <label>Konten</label>
@@ -146,29 +161,43 @@
     <script src="../js/admin-berita.js"></script>
     <script src="../js/admin-notifikasi.js"></script>
     <script>
-    // ===== CROP INTERAKTIF =====
+    // ===== CROP MODAL =====
     const CARD_RATIO = 260 / 400;
+    let cropCurrentSrc = '';
+
+    function bukaModalCrop() {
+        const src = document.getElementById('preview-img').src;
+        if (!src || src === window.location.href) return;
+        cropCurrentSrc = src;
+        const modal = document.getElementById('modal-crop');
+        modal.style.display = 'flex';
+        initCrop(src);
+    }
+
+    function tutupModalCrop() {
+        document.getElementById('modal-crop').style.display = 'none';
+    }
+
+    function simpanPosisi() {
+        const pct = parseInt(document.getElementById('foto_posisi').value) || 50;
+        document.getElementById('posisi-preview-label').textContent = 'Posisi: ' + pct + '%';
+        tutupModalCrop();
+    }
 
     function initCrop(imgSrc) {
-        const container = document.getElementById('crop-container');
-        const img       = document.getElementById('preview-img');
-        const cropBox   = document.getElementById('crop-box');
-        const darkTop   = document.getElementById('crop-dark-top');
-        const darkBot   = document.getElementById('crop-dark-bottom');
-        const posLabel  = document.getElementById('posisi-label');
-        const posInput  = document.getElementById('foto_posisi');
+        const img      = document.getElementById('crop-preview-img');
+        const cropBox  = document.getElementById('crop-box');
+        const darkTop  = document.getElementById('crop-dark-top');
+        const darkBot  = document.getElementById('crop-dark-bottom');
+        const posLabel = document.getElementById('crop-posisi-label');
+        const posInput = document.getElementById('foto_posisi');
 
-        // Set src hanya jika berbeda untuk hindari loop
-        if (img.getAttribute('src') !== imgSrc) {
-            img._fromCrop = true;
-            img.src = imgSrc;
-        }
-        container.style.display = 'block';
+        img.src = imgSrc;
 
         function setup() {
             const W = img.offsetWidth;
             const H = img.offsetHeight;
-            if (!W || !H) return;
+            if (!W || !H) { setTimeout(setup, 100); return; }
 
             const boxH = Math.round(W * CARD_RATIO);
             const savedPct = parseFloat(posInput.value) || 50;
@@ -177,7 +206,7 @@
             function update() {
                 const pct = Math.round(((topPx + boxH / 2) / H) * 100);
                 posInput.value = pct;
-                posLabel.textContent = pct + '%';
+                posLabel.textContent = 'Posisi: ' + pct + '%';
                 cropBox.style.top    = topPx + 'px';
                 cropBox.style.height = boxH + 'px';
                 darkTop.style.height = topPx + 'px';
@@ -190,18 +219,22 @@
             let dragging = false, startY = 0, startTop = 0;
             cropBox.onmousedown = e => { dragging = true; startY = e.clientY; startTop = topPx; e.preventDefault(); };
             document.onmousemove = e => { if (!dragging) return; topPx = Math.max(0, Math.min(startTop + (e.clientY - startY), H - boxH)); update(); };
-            document.onmouseup = () => { dragging = false; };
-
+            document.onmouseup  = () => { dragging = false; };
             cropBox.ontouchstart = e => { dragging = true; startY = e.touches[0].clientY; startTop = topPx; };
             document.ontouchmove = e => { if (!dragging) return; topPx = Math.max(0, Math.min(startTop + (e.touches[0].clientY - startY), H - boxH)); update(); };
-            document.ontouchend = () => { dragging = false; };
+            document.ontouchend  = () => { dragging = false; };
         }
 
-        if (img.complete && img.naturalHeight) {
-            setup();
-        } else {
-            img.onload = setup;
-        }
+        if (img.complete && img.naturalHeight) setup();
+        else img.onload = setup;
+    }
+
+    // Tampilkan tombol atur posisi setelah preview ada
+    function showAturPosisi(src) {
+        const preview = document.getElementById('preview-img');
+        preview.src = src;
+        preview.style.display = 'block';
+        document.getElementById('btn-atur-posisi-wrap').style.display = 'block';
     }
     </script>
 </body>

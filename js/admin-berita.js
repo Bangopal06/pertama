@@ -69,7 +69,7 @@ document.getElementById('gambar_url').addEventListener('input', function(e) {
             alert('URL gambar tidak valid atau tidak bisa diakses');
         };
         preview.onload = function() {
-            if (typeof initCrop === 'function') initCrop(url);
+            if (typeof showAturPosisi === 'function') showAturPosisi(url);
         };
         currentImageUrl = url;
     } else {
@@ -103,7 +103,7 @@ document.getElementById('gambar_file').addEventListener('change', function(e) {
         reader.onload = function(event) {
             preview.src = event.target.result;
             preview.style.display = 'block'
-            if (typeof initCrop === 'function') initCrop(event.target.result);
+            if (typeof showAturPosisi === 'function') showAturPosisi(event.target.result);
         };
         reader.readAsDataURL(file);
     } else {
@@ -348,12 +348,7 @@ async function editBerita(id) {
             const preview = document.getElementById('preview-img');
             if (item.gambar_url) {
                 currentImageUrl = item.gambar_url;
-                if (typeof initCrop === 'function') {
-                    initCrop(item.gambar_url);
-                } else {
-                    preview.src = item.gambar_url;
-                    preview.style.display = 'block'
-                }
+                if (typeof showAturPosisi === 'function') showAturPosisi(item.gambar_url);
             }
             
             editingId = id;
