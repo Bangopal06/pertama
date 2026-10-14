@@ -358,7 +358,7 @@ body {
 /* CTA Section */
 .cta-section {
     padding: 0;
-    background: url('../img/SPMB.jpg') center center / cover no-repeat;
+    background: url('../img/SPMB.png') center center / cover no-repeat;
     position: relative;
     aspect-ratio: 2106 / 747;
     display: flex;
