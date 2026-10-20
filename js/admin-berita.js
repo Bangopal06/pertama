@@ -307,13 +307,19 @@ async function loadBerita() {
         }
         
         tbody.innerHTML = berita.map(b => `
-            <tr>
-                <td><img src="${b.gambar_url || 'https://via.placeholder.com/100x60?text=No+Image'}" alt="${b.judul}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 5px;"></td>
+            <tr style="${b.is_pinned ? 'background:#fffbeb;' : ''}">
+                <td>
+                    <img src="${b.gambar_url || 'https://via.placeholder.com/100x60?text=No+Image'}" alt="${b.judul}" style="width:100px;height:60px;object-fit:cover;border-radius:5px;">
+                    ${b.is_pinned ? '<div style="font-size:11px;color:#d97706;font-weight:700;text-align:center;margin-top:3px;">📌 Disematkan</div>' : ''}
+                </td>
                 <td>${b.judul}</td>
                 <td>${b.kategori}</td>
                 <td>${new Date(b.tanggal).toLocaleDateString('id-ID')}</td>
-                <td>
+                <td style="white-space:nowrap;">
                     <button class="btn-edit" onclick="editBerita(${b.id})">Edit</button>
+                    <button onclick="togglePin(${b.id}, ${b.is_pinned})" style="padding:5px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;background:${b.is_pinned ? '#f59e0b' : '#e5e7eb'};color:${b.is_pinned ? 'white' : '#374151'};font-weight:600;">
+                        ${b.is_pinned ? '📌 Lepas' : '📌 Sematkan'}
+                    </button>
                     <button class="btn-delete" onclick="deleteBerita(${b.id})">Hapus</button>
                 </td>
             </tr>
@@ -359,6 +365,31 @@ async function editBerita(id) {
         }
     } catch (error) {
         console.error('Error:', error);
+    }
+}
+
+async function togglePin(id, currentPinned) {
+    try {
+        // Jika mau pin, cek dulu berapa yang sudah dipin (max 3)
+        if (!currentPinned) {
+            const { count } = await window.supabaseClient
+                .from('berita')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_pinned', true);
+            if (count >= 3) {
+                showNotification('Maksimal 3 berita yang bisa disematkan. Lepas salah satu dulu.', 'error');
+                return;
+            }
+        }
+        const { error } = await window.supabaseClient
+            .from('berita')
+            .update({ is_pinned: !currentPinned })
+            .eq('id', id);
+        if (error) throw error;
+        showNotification(currentPinned ? 'Berita dilepas dari sematkan.' : 'Berita berhasil disematkan!', 'success');
+        loadBerita();
+    } catch (err) {
+        showNotification('Gagal: ' + err.message, 'error');
     }
 }
 

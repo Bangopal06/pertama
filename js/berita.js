@@ -4,12 +4,16 @@ function buildCard(b) {
     const excerpt = b.konten.length > 150 ? b.konten.substring(0, 150) + '...' : b.konten;
     const katClass = b.kategori === 'PPDB' ? 'news-category ppdb' : 'news-category';
     const posY = isNaN(b.foto_posisi) ? 'center' : b.foto_posisi + '%';
+    const pinBadge = b.is_pinned ? '<span style="position:absolute;top:8px;right:8px;background:#f59e0b;color:white;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">📌 Disematkan</span>' : '';
     return `
-        <div class="news-card" data-kategori="${b.kategori}">
-            <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}"
-                 alt="${b.judul}" class="news-image" loading="lazy"
-                 style="object-position:center ${posY};"
-                 onerror="this.src='https://via.placeholder.com/400x250?text=Berita+Sekolah'">
+        <div class="news-card" data-kategori="${b.kategori}" style="${b.is_pinned ? 'border:2px solid #f59e0b;' : ''}">
+            <div style="position:relative;">
+                <img src="${b.gambar_url || 'https://via.placeholder.com/400x250?text=Berita+Sekolah'}"
+                     alt="${b.judul}" class="news-image" loading="lazy"
+                     style="object-position:center ${posY};"
+                     onerror="this.src='https://via.placeholder.com/400x250?text=Berita+Sekolah'">
+                ${pinBadge}
+            </div>
             <div class="news-content">
                 <span class="${katClass}">${b.kategori}</span>
                 <h3>${b.judul}</h3>
@@ -43,7 +47,8 @@ async function loadAllNews() {
     try {
         const { data, error } = await window.supabaseClient
             .from('berita')
-            .select('id, judul, konten, kategori, gambar_url, tanggal')
+            .select('id, judul, konten, kategori, gambar_url, tanggal, foto_posisi, is_pinned')
+            .order('is_pinned', { ascending: false })
             .order('tanggal', { ascending: false });
 
         if (error) throw error;

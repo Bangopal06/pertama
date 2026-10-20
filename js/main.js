@@ -182,7 +182,8 @@ async function loadPostinganTerbaru() {
     try {
         const { data, error } = await window.supabaseClient
             .from('berita')
-            .select('id, judul, konten, kategori, gambar_url, tanggal')
+            .select('id, judul, konten, kategori, gambar_url, tanggal, foto_posisi, is_pinned')
+            .order('is_pinned', { ascending: false })
             .order('tanggal', { ascending: false })
             .limit(6);
 
@@ -207,14 +208,16 @@ async function loadPostinganTerbaru() {
             const tgl = new Date(b.tanggal).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
             const color = katColor[b.kategori] || '#1e3a8a';
             const posisi = b.foto_posisi || 'center';
+            const pinBadge = b.is_pinned ? '<span style="position:absolute;top:8px;right:8px;background:#f59e0b;color:white;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;z-index:2;">📌</span>' : '';
             return `
-                <a href="berita-detail.html?id=${b.id}" class="post-card">
-                    <div class="post-img">
+                <a href="berita-detail.html?id=${b.id}" class="post-card" style="${b.is_pinned ? 'border:2px solid #f59e0b;' : ''}">
+                    <div class="post-img" style="position:relative;">
                         <img src="${b.gambar_url || 'https://via.placeholder.com/400x220?text=Berita'}"
                              alt="${b.judul}" loading="lazy"
                              style="object-position:center ${isNaN(b.foto_posisi) ? 'center' : b.foto_posisi + '%'};"
                              onerror="this.src='https://via.placeholder.com/400x220?text=Berita'">
                         <span class="post-kat" style="background:${color}">${b.kategori}</span>
+                        ${pinBadge}
                     </div>
                     <div class="post-body">
                         <h4>${b.judul}</h4>
